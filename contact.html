@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Milly's</title>
+<meta name="description" content="Contact Milly's via LINE, phone, or email.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow" data-lang="en">We'd love to hear from you</span>
+      <span class="eyebrow" data-lang="th">ยินดีรับฟังทุกข้อความจากคุณ</span>
+      <h1 data-lang="en">Contact Us</h1>
+      <h1 data-lang="th">ติดต่อเรา</h1>
+
+      <div class="two-col" style="margin-top:28px;">
+        <div>
+          <div class="info-card" style="margin-bottom:20px;">
+            <h3 data-lang="en">Fastest way to reach us</h3>
+            <h3 data-lang="th">ช่องทางที่รวดเร็วที่สุด</h3>
+            <p data-lang="en">Message us on LINE for the quickest reply, including size help and order questions.</p>
+            <p data-lang="th">ทักไลน์เพื่อการตอบกลับที่รวดเร็วที่สุด ไม่ว่าจะเป็นเรื่องไซซ์หรือคำถามเกี่ยวกับคำสั่งซื้อ</p>
+            <a class="btn" style="margin-top:10px;" href="https://line.me/ti/p/~milly.2023" target="_blank" rel="noopener">Chat on LINE — @milly.2023</a>
+          </div>
+
+          <div class="info-card">
+            <h3 data-lang="en">Business Details</h3>
+            <h3 data-lang="th">ข้อมูลร้านค้า</h3>
+            <table class="pd-table">
+              <tr><th data-lang="en">Phone</th><th data-lang="th">โทรศัพท์</th><td colspan="1">[Owner to provide]</td></tr>
+              <tr><th data-lang="en">Email</th><th data-lang="th">อีเมล</th><td colspan="1">[Owner to provide]</td></tr>
+              <tr><th data-lang="en">Address</th><th data-lang="th">ที่อยู่</th><td colspan="1">[Owner to provide]</td></tr>
+              <tr><th data-lang="en">Business Hours</th><th data-lang="th">เวลาทำการ</th><td colspan="1">[Owner to provide]</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3 data-lang="en">Send a Message</h3>
+          <h3 data-lang="th">ส่งข้อความถึงเรา</h3>
+          <p data-lang="en">This form opens your email app with your message pre-filled — nothing is sent automatically.</p>
+          <p data-lang="th">ฟอร์มนี้จะเปิดแอปอีเมลของคุณพร้อมข้อความที่กรอกไว้ ระบบจะไม่ส่งข้อความให้อัตโนมัติ</p>
+          <form id="contactForm">
+            <div class="form-row">
+              <label for="cf-name">Name / ชื่อ</label>
+              <input id="cf-name" name="name" type="text" required>
+            </div>
+            <div class="form-row">
+              <label for="cf-email">Email / อีเมล</label>
+              <input id="cf-email" name="email" type="email" required>
+            </div>
+            <div class="form-row">
+              <label for="cf-message">Message / ข้อความ</label>
+              <textarea id="cf-message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-block">
+              <span data-lang="en">Send Message</span><span data-lang="th">ส่งข้อความ</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="/js/products.js"></script>
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById("contactForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const name = document.getElementById("cf-name").value;
+    const email = document.getElementById("cf-email").value;
+    const message = document.getElementById("cf-message").value;
+    const subject = encodeURIComponent("Website enquiry from " + name);
+    const body = encodeURIComponent(message + "\n\n— " + name + " (" + email + ")");
+    // Owner: replace the address below with the real contact inbox once known
+    window.location.href = `mailto:hello@millys.example?subject=${subject}&body=${body}`;
+  });
+</script>
+</body>
+</html>
