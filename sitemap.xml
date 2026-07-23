@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://YOUR-DOMAIN-HERE.com/index.html</loc></url>
-  <url><loc>https://YOUR-DOMAIN-HERE.com/shop.html</loc></url>
-  <url><loc>https://YOUR-DOMAIN-HERE.com/size-guide.html</loc></url>
-  <url><loc>https://YOUR-DOMAIN-HERE.com/delivery-exchange.html</loc></url>
-  <url><loc>https://YOUR-DOMAIN-HERE.com/about.html</loc></url>
-  <url><loc>https://YOUR-DOMAIN-HERE.com/contact.html</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/shop.html</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/delivery-exchange.html</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/about.html</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/contact.html</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-DR-001</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-DR-002</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-DR-003</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-KF-001</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-KF-002</loc></url>
+  <url><loc>https://millys.deluxejahseh.workers.dev/product.html?code=MLY-KF-003</loc></url>
 </urlset>

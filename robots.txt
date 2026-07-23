@@ -1,4 +1,4 @@
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://YOUR-DOMAIN-HERE.com/sitemap.xml
+# PRE-LAUNCH: keep search engines out until the owner approves launch.

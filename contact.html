@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact — Milly's</title>
 <meta name="description" content="Contact Milly's via LINE, phone, or email.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FBF4EE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact — Milly's">
+<meta property="og:description" content="Contact Milly's by LINE, phone, email, or visit us in Bangkok.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
@@ -26,19 +32,47 @@
           <div class="info-card" style="margin-bottom:20px;">
             <h3 data-lang="en">Fastest way to reach us</h3>
             <h3 data-lang="th">ช่องทางที่รวดเร็วที่สุด</h3>
-            <p data-lang="en">Message us on LINE for the quickest reply, including size help and order questions.</p>
-            <p data-lang="th">ทักไลน์เพื่อการตอบกลับที่รวดเร็วที่สุด ไม่ว่าจะเป็นเรื่องไซซ์หรือคำถามเกี่ยวกับคำสั่งซื้อ</p>
-            <a class="btn" style="margin-top:10px;" href="https://line.me/ti/p/~milly.2023" target="_blank" rel="noopener">Chat on LINE — @milly.2023</a>
+            <p data-lang="en">Message us on LINE for the quickest reply.</p>
+            <p data-lang="th">ทักไลน์เพื่อการตอบกลับที่รวดเร็วที่สุด</p>
+            <a class="btn" style="margin-top:10px;" data-config-href="marketplaces.line"
+              target="_blank" rel="noopener noreferrer">Chat on LINE — @milly.2023</a>
           </div>
 
           <div class="info-card">
             <h3 data-lang="en">Business Details</h3>
             <h3 data-lang="th">ข้อมูลร้านค้า</h3>
-            <table class="pd-table">
-              <tr><th data-lang="en">Phone</th><th data-lang="th">โทรศัพท์</th><td colspan="1">[Owner to provide]</td></tr>
-              <tr><th data-lang="en">Email</th><th data-lang="th">อีเมล</th><td colspan="1">[Owner to provide]</td></tr>
-              <tr><th data-lang="en">Address</th><th data-lang="th">ที่อยู่</th><td colspan="1">[Owner to provide]</td></tr>
-              <tr><th data-lang="en">Business Hours</th><th data-lang="th">เวลาทำการ</th><td colspan="1">[Owner to provide]</td></tr>
+            <table class="pd-table business-table">
+              <tbody>
+                <tr>
+                  <th scope="row"><span data-lang="en">Phone</span><span data-lang="th">โทรศัพท์</span></th>
+                  <td><a data-config-href="contact.phone_href" data-config-text="contact.phone">+66 97 041 0363</a></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span data-lang="en">Email</span><span data-lang="th">อีเมล</span></th>
+                  <td><a data-config-href="contact.email_href" data-config-text="contact.email">supportatmillys@gmail.com</a></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span data-lang="en">Address</span><span data-lang="th">ที่อยู่</span></th>
+                  <td data-config-text="contact.address">56, 24 Ratchadaphisek 16 Alley, Wat Tha Phra, Bangkok Yai, Bangkok 10600</td>
+                </tr>
+                <tr>
+                  <th scope="row"><span data-lang="en">Google Maps</span><span data-lang="th">Google Maps</span></th>
+                  <td>
+                    <a data-config-href="contact.google_maps" target="_blank"
+                      rel="noopener noreferrer">
+                      <span data-lang="en">Open location</span>
+                      <span data-lang="th">เปิดแผนที่</span>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><span data-lang="en">Business Hours</span><span data-lang="th">เวลาทำการ</span></th>
+                  <td>
+                    <span data-lang="en" data-config-text="contact.hours_en">8.30 AM - 6.30 PM (GMT +7)</span>
+                    <span data-lang="th" data-config-text="contact.hours_th">08.30-18.30 น. (GMT +7)</span>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -46,8 +80,6 @@
         <div class="info-card">
           <h3 data-lang="en">Send a Message</h3>
           <h3 data-lang="th">ส่งข้อความถึงเรา</h3>
-          <p data-lang="en">This form opens your email app with your message pre-filled — nothing is sent automatically.</p>
-          <p data-lang="th">ฟอร์มนี้จะเปิดแอปอีเมลของคุณพร้อมข้อความที่กรอกไว้ ระบบจะไม่ส่งข้อความให้อัตโนมัติ</p>
           <form id="contactForm">
             <div class="form-row">
               <label for="cf-name">Name / ชื่อ</label>
@@ -73,19 +105,8 @@
 
 <div id="site-footer"></div>
 
+<script src="/js/site-config.js"></script>
 <script src="/js/products.js"></script>
 <script src="/js/main.js"></script>
-<script>
-  document.getElementById("contactForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const name = document.getElementById("cf-name").value;
-    const email = document.getElementById("cf-email").value;
-    const message = document.getElementById("cf-message").value;
-    const subject = encodeURIComponent("Website enquiry from " + name);
-    const body = encodeURIComponent(message + "\n\n— " + name + " (" + email + ")");
-    // Owner: replace the address below with the real contact inbox once known
-    window.location.href = `mailto:hello@millys.example?subject=${subject}&body=${body}`;
-  });
-</script>
 </body>
 </html>
