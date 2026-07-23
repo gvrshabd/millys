@@ -1,123 +1,83 @@
-# Milly's Garment Website — Version 1
+# Milly's Garment Website
 
-A mobile-first, Thai/English catalogue website. No checkout — every product links out to LINE, TikTok Shop, Shopee, and Lazada for ordering, exactly as described in the project guide.
+A mobile-first Thai-English catalogue website for Milly's. Customers browse
+garments here and complete orders through LINE, TikTok Shop, Shopee, or Lazada.
+The website does not collect payments and has no customer accounts.
 
-## What's already built
-- Home, Shop (with category filter), Product detail, Size Guide, Delivery & Exchange, About, and Contact pages
-- Thai/English language toggle (top right, saved per visitor)
-- Mobile-first responsive layout
-- 6 sample products (3 dresses, 3 kaftans) — **placeholder content, replace before launch**
-- `robots.txt` + `sitemap.xml` for basic Google Search Console setup
-- Reusable header/footer so nav only needs to be edited in one place
+## Current status
 
-## What you still need to provide (see checklist below)
-Everything currently marked `[Owner to provide]` or `[Owner to confirm]` on the About, Delivery & Exchange, and Contact pages, plus your real product photos and info in `js/products.js`.
+The website is in pre-launch development:
 
----
+- Search indexing is disabled.
+- The `main` branch is the Cloudflare production branch.
+- Work should happen on review branches and only merge after owner approval.
+- Six sample products remain placeholders until real product information and
+  media are supplied.
+- Delivery, exchange, and About content still need owner confirmation.
 
-## How to preview the site on your own computer
-No installation needed beyond a browser and Python (already on most computers):
+## Pages
 
-```
-cd millys-website
-python3 -m http.server 8080
-```
+- Home
+- Shop and category filters
+- Product details with product-specific measurements
+- Delivery & Exchange
+- About
+- Contact
 
-Then open `http://localhost:8080` in your browser.
+There is no separate size-guide page. Fit and measurement information belongs
+on each product.
 
----
+## Owner-editable files
 
-## How to deploy on Cloudflare Pages (free, works with a custom domain)
+- `js/products.js` - products, stock, prices, translations, images, videos, and
+  product-specific order links
+- `js/site-config.js` - business details, site address, pre-launch status, and
+  shop-wide marketplace links, plus optional Analytics/Search Console IDs
+- `PRODUCT_MANAGEMENT.md` - step-by-step instructions for routine updates
 
-**Option A — Direct upload (fastest, no GitHub needed):**
-1. Go to the Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Upload assets**.
-2. Give the project a name (e.g. `millys-website`).
-3. Drag the entire `millys-website` folder (or a zip of its contents) into the upload box.
-4. Click **Deploy**. Cloudflare gives you a free `*.pages.dev` URL immediately.
-5. No build command and no output directory setting is needed — this is a plain static site.
+## Preview locally
 
-**Option B — Connect a GitHub repo (better for ongoing updates):**
-1. Push this folder to a GitHub repository.
-2. In Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
-3. Select the repo. Leave **Build command** blank and **Build output directory** as `/` (root) — there is no build step.
-4. Click **Save and Deploy**. Every future `git push` will auto-redeploy the site.
+Serve the project folder through a local web server. One option is:
 
-**Adding your custom domain:**
-1. In your Pages project → **Custom domains** → **Set up a custom domain**.
-2. Enter your domain (e.g. `millys.com`) and follow the DNS instructions. If your domain is already on Cloudflare, this is automatic; otherwise you'll add the CNAME record Cloudflare shows you.
-3. HTTPS is issued automatically — no extra steps.
-
----
-
-## How to add or edit products (no coding needed once you see the pattern)
-Open `js/products.js`. Each product is one block like this:
-
-```js
-{
-  code: "MLY-DR-004",
-  name_en: "Your Product Name",
-  name_th: "ชื่อสินค้าภาษาไทย",
-  category: "dresses",   // or "kaftans"
-  price: 1290,
-  fabric_en: "...",
-  fabric_th: "...",
-  colours: ["Colour 1", "Colour 2"],
-  measurements: { bust: "...", waist: "...", length: "...", sleeve: "..." },
-  care_en: "...",
-  care_th: "...",
-  stock: "in_stock",     // or "low_stock" / "sold_out"
-  images: ["photo1.jpg"],   // filenames you upload into /images
-  description_en: "...",
-  description_th: "..."
-}
+```text
+python -m http.server 8080
 ```
 
-To add a product: copy an existing block, change every value, and add a comma between blocks. To remove a product: delete its whole block. To add real photos: upload the image files into the `/images` folder and list their filenames in that product's `images` array — until then, a "Photo coming soon" placeholder shows automatically.
+Then open `http://localhost:8080`.
 
-Your LINE, TikTok Shop, Shopee, and Lazada links are already set at the bottom of the same file, under `BRAND_LINKS` — edit them there if they ever change, and they'll update everywhere on the site automatically.
+Opening the HTML files directly will not load the shared header and footer
+because browsers block local partial requests.
 
----
+## Pre-launch search controls
 
-## Before you launch — checklist
-This mirrors Section 4 and Section 9 of the project guide:
+Until the owner approves public launch:
 
-- [ ] Replace all 6 sample products with your real 20–30 launch products
-- [ ] Upload 4–7 real photos per product into `/images`, referenced in `products.js`
-- [ ] Fill in Delivery & Exchange page (delivery time, area, fee, exchange window)
-- [ ] Fill in Contact page (phone, email, address, business hours)
-- [ ] Fill in the About page brand story
-- [ ] Have a Thai speaker review all Thai text — it was written to be correct and natural but should be double-checked, especially the sample product Thai copy
-- [ ] Set the real contact email in `contact.html` (currently `hello@millys.example`)
-- [ ] Replace `YOUR-DOMAIN-HERE.com` in `robots.txt` and `sitemap.xml` with your real domain
-- [ ] Add Google Analytics / Google Search Console (see below)
-- [ ] Test on an Android phone, an iPhone-sized screen, and a computer
-- [ ] Confirm every LINE/TikTok/Shopee/Lazada link opens the right place
-- [ ] Only then: connect your real domain in Cloudflare Pages and announce the site
+- `SITE_CONFIG.prelaunch` must remain `true`.
+- Every page must keep `noindex, nofollow`.
+- `robots.txt` must keep `Disallow: /`.
 
-## Adding Google Analytics (optional, for visitor tracking)
-1. Create a free Google Analytics 4 property and copy your Measurement ID (looks like `G-XXXXXXX`).
-2. Add the standard GA4 snippet Google gives you into the `<head>` of each HTML page, just above `</head>`.
-3. For Google Search Console: verify your domain there, then submit `sitemap.xml`.
+At launch, update these controls together, confirm the final domain in
+`js/site-config.js` and `sitemap.xml`, then submit the sitemap to Google Search
+Console.
 
----
+## Structure
 
-## Project structure
-```
-millys-website/
-├── index.html              Home page
-├── shop.html                Shop / category listing
-├── product.html              Product detail (reads ?code=... from the URL)
-├── size-guide.html
-├── delivery-exchange.html
-├── about.html
-├── contact.html
-├── robots.txt
-├── sitemap.xml
-├── AGENTS.md                 Rules for future edits (for Codex or any AI helper)
-├── css/style.css
-├── js/products.js            <- Edit here to change products
-├── js/main.js
-├── partials/header.html      Shared navigation
-├── partials/footer.html      Shared footer
-└── images/                   Upload real product photos here
+```text
+index.html
+shop.html
+product.html
+delivery-exchange.html
+about.html
+contact.html
+robots.txt
+sitemap.xml
+PRODUCT_MANAGEMENT.md
+css/style.css
+js/site-config.js
+js/products.js
+js/main.js
+partials/header.html
+partials/footer.html
+images/products/
+tools/check-site.mjs
 ```

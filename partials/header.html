@@ -8,9 +8,6 @@
       <a href="/shop.html" data-nav="shop">
         <span data-lang="en">Shop</span><span data-lang="th">สินค้า</span>
       </a>
-      <a href="/size-guide.html" data-nav="size-guide">
-        <span data-lang="en">Size Guide</span><span data-lang="th">ตารางไซซ์</span>
-      </a>
       <a href="/delivery-exchange.html" data-nav="delivery-exchange">
         <span data-lang="en">Delivery &amp; Exchange</span><span data-lang="th">จัดส่ง&amp;เปลี่ยนสินค้า</span>
       </a>
@@ -22,21 +19,48 @@
       </a>
     </nav>
     <div class="nav-right">
-      <div class="lang-toggle" role="group" aria-label="Language">
-        <button type="button" data-set-lang="en">EN</button>
-        <button type="button" data-set-lang="th">TH</button>
+      <div class="lang-toggle" role="group" aria-label="Choose language">
+        <button type="button" data-set-lang="en" aria-label="English"
+          aria-pressed="false" title="English">
+          <svg class="flag-art" viewBox="0 0 36 36" aria-hidden="true">
+            <defs><clipPath id="flag-en-clip"><circle cx="18" cy="18" r="17"/></clipPath></defs>
+            <g clip-path="url(#flag-en-clip)">
+              <rect width="36" height="36" fill="#012169"/>
+              <path d="M0 0L36 36M36 0L0 36" stroke="#fff" stroke-width="9"/>
+              <path d="M0 0L36 36M36 0L0 36" stroke="#C8102E" stroke-width="4"/>
+              <path d="M18 0V36M0 18H36" stroke="#fff" stroke-width="12"/>
+              <path d="M18 0V36M0 18H36" stroke="#C8102E" stroke-width="6"/>
+            </g>
+            <circle cx="18" cy="18" r="17" fill="none" stroke="#D8C9BC"/>
+          </svg>
+          <span class="sr-only">English</span>
+        </button>
+        <button type="button" data-set-lang="th" aria-label="ภาษาไทย"
+          aria-pressed="false" title="ภาษาไทย">
+          <svg class="flag-art" viewBox="0 0 36 36" aria-hidden="true">
+            <defs><clipPath id="flag-th-clip"><circle cx="18" cy="18" r="17"/></clipPath></defs>
+            <g clip-path="url(#flag-th-clip)">
+              <rect width="36" height="36" fill="#A51931"/>
+              <rect y="7" width="36" height="6" fill="#fff"/>
+              <rect y="13" width="36" height="10" fill="#2D2A4A"/>
+              <rect y="23" width="36" height="6" fill="#fff"/>
+            </g>
+            <circle cx="18" cy="18" r="17" fill="none" stroke="#D8C9BC"/>
+          </svg>
+          <span class="sr-only">ภาษาไทย</span>
+        </button>
       </div>
-      <button type="button" class="menu-btn" id="menuToggle" aria-expanded="false" aria-controls="mobileNav">
+      <button type="button" class="menu-btn" id="menuToggle" aria-expanded="false"
+        aria-controls="mobileNav" aria-label="Open navigation menu">
         <span data-lang="en">Menu</span><span data-lang="th">เมนู</span>
       </button>
     </div>
   </div>
   <nav class="mobile-nav" id="mobileNav">
-    <a href="/index.html"><span data-lang="en">Home</span><span data-lang="th">หน้าแรก</span></a>
-    <a href="/shop.html"><span data-lang="en">Shop</span><span data-lang="th">สินค้า</span></a>
-    <a href="/size-guide.html"><span data-lang="en">Size Guide</span><span data-lang="th">ตารางไซซ์</span></a>
-    <a href="/delivery-exchange.html"><span data-lang="en">Delivery &amp; Exchange</span><span data-lang="th">จัดส่ง&amp;เปลี่ยนสินค้า</span></a>
-    <a href="/about.html"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับเรา</span></a>
-    <a href="/contact.html"><span data-lang="en">Contact</span><span data-lang="th">ติดต่อเรา</span></a>
+    <a href="/index.html" data-nav="home"><span data-lang="en">Home</span><span data-lang="th">หน้าแรก</span></a>
+    <a href="/shop.html" data-nav="shop"><span data-lang="en">Shop</span><span data-lang="th">สินค้า</span></a>
+    <a href="/delivery-exchange.html" data-nav="delivery-exchange"><span data-lang="en">Delivery &amp; Exchange</span><span data-lang="th">จัดส่ง&amp;เปลี่ยนสินค้า</span></a>
+    <a href="/about.html" data-nav="about"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับเรา</span></a>
+    <a href="/contact.html" data-nav="contact"><span data-lang="en">Contact</span><span data-lang="th">ติดต่อเรา</span></a>
   </nav>
 </header>

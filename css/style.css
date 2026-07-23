@@ -7,11 +7,11 @@
   --cream: #FBF4EE;
   --cream-deep: #F5EAE1;
   --rose: #D98A93;
-  --rose-deep: #B5646F;
+  --rose-deep: #984653;
   --sand: #EDE1D0;
   --sage: #A9B39A;
   --ink: #3D332C;
-  --taupe: #8A7B6E;
+  --taupe: #6F6157;
   --line: #E3D4C7;
   --white: #FFFFFF;
 
@@ -40,6 +40,18 @@ body {
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .container {
   max-width: var(--max-width);
@@ -128,28 +140,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .nav-right { display: flex; align-items: center; gap: 12px; }
 
 .lang-toggle {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  background: var(--sand);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 6px 12px;
   display: flex;
   gap: 6px;
 }
 .lang-toggle button {
-  background: none;
-  border: none;
-  color: var(--taupe);
-  padding: 2px 4px;
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--white);
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .lang-toggle button.active {
-  color: var(--white);
-  background: var(--rose-deep);
-  border-radius: 999px;
-  padding: 2px 8px;
+  border-color: var(--rose-deep);
+  box-shadow: 0 0 0 2px rgba(152, 70, 83, 0.18);
+  transform: translateY(-1px);
 }
+.flag-art { width: 27px; height: 27px; display: block; }
 
 .menu-btn {
   background: none;
@@ -237,6 +248,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 .order-btn:hover { border-color: var(--rose-deep); color: var(--rose-deep); transform: translateY(-2px); }
+.order-btn.disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
 .order-btn .dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--rose);
@@ -331,6 +347,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .swatch-pill .swatch { width: 20px; height: 20px; border-radius: 50%; }
 .swatch-dresses { background: var(--rose); }
 .swatch-kaftans { background: var(--sage); }
+.swatch-tops { background: #D7A879; }
+.swatch-sets { background: #A6A7C4; }
+.swatch-bags { background: #B58A6A; }
+.swatch-new { background: var(--rose-deep); }
 .swatch-all { background: linear-gradient(135deg, var(--rose), var(--sage)); }
 
 /* ============================================================
@@ -400,6 +420,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .stock-flag.low { color: var(--rose-deep); }
 .stock-flag.out { color: var(--taupe); }
+.new-flag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--rose-deep);
+  color: var(--white);
+}
 
 .tag-name { font-family: var(--font-display); font-size: 1.02rem; margin-bottom: 2px; }
 .tag-code { font-family: var(--font-mono); font-size: 0.68rem; color: var(--taupe); letter-spacing: 0.04em; display: block; margin-bottom: 8px; }
@@ -425,9 +458,58 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   overflow: hidden;
 }
 .pd-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.pd-gallery-main .placeholder-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--taupe);
+  text-align: center;
+  padding: 20px;
+}
+.pd-gallery-main .placeholder-label svg {
+  display: block;
+  margin: 0 auto 10px;
+  opacity: 0.58;
+}
+
+.pd-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.pd-thumbnail {
+  aspect-ratio: 3/4;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--sand);
+}
+.pd-thumbnail.active { border-color: var(--rose-deep); }
+.pd-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.pd-video-wrap { margin-top: 28px; }
+.pd-video-wrap h2 { font-size: 1.2rem; }
+.pd-video {
+  width: 100%;
+  max-height: 520px;
+  background: var(--ink);
+  border-radius: var(--radius);
+}
 
 .pd-code { font-family: var(--font-mono); font-size: 0.72rem; color: var(--taupe); letter-spacing: 0.05em; }
 .pd-price { font-family: var(--font-mono); font-size: 1.4rem; color: var(--rose-deep); margin: 10px 0 18px; }
+.stock-status {
+  display: inline-block;
+  margin: 0 0 16px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.stock-status.in_stock { color: #46603B; }
+.stock-status.low_stock { color: var(--rose-deep); }
+.stock-status.sold_out { color: var(--taupe); }
 
 .pd-table {
   width: 100%;
@@ -442,7 +524,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-family: var(--font-mono);
   font-size: 0.8rem;
 }
-.pd-table th { color: var(--taupe); font-weight: 400; width: 40%; }
+.pd-table th { color: var(--taupe); font-weight: 500; width: 36%; }
+.pd-table td { width: 64%; }
+.table-scroll { width: 100%; overflow-x: auto; }
+.product-sizing { margin-top: 28px; }
+.product-sizing h2 { font-size: 1.35rem; margin-bottom: 4px; }
+.section-note, .order-note, .order-unavailable {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.order-unavailable {
+  padding: 12px 14px;
+  border-left: 3px solid var(--rose-deep);
+  background: var(--cream-deep);
+}
 
 .colour-dots { display: flex; gap: 8px; margin: 10px 0 4px; flex-wrap: wrap; }
 .colour-chip {
@@ -497,6 +592,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--white);
   color: var(--ink);
 }
+.business-table td { overflow-wrap: anywhere; }
+.business-table a {
+  color: var(--rose-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 /* ============================================================
    MISC PAGE PARTS
@@ -517,10 +618,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .breadcrumb { font-family: var(--font-mono); font-size: 0.75rem; color: var(--taupe); margin-bottom: 18px; }
 .breadcrumb a:hover { color: var(--rose-deep); }
 
-/* language visibility: JS toggles [data-lang] elements */
-[data-lang="th"] { display: none; }
-html[lang="th"] [data-lang="en"] { display: none; }
-html[lang="th"] [data-lang="th"] { display: initial; }
+/* language visibility: JS toggles the document language */
+[data-lang="th"] { display: none !important; }
+html[lang="th"] [data-lang="en"] { display: none !important; }
+html[lang="th"] [data-lang="th"] { display: revert !important; }
 
 .empty-state {
   text-align: center;
@@ -528,4 +629,10 @@ html[lang="th"] [data-lang="th"] { display: initial; }
   color: var(--taupe);
   font-family: var(--font-mono);
   font-size: 0.85rem;
+}
+
+.partial-error {
+  padding: 16px 20px;
+  font-family: var(--font-display);
+  font-weight: 600;
 }
