@@ -168,6 +168,8 @@ Allowed category values:
 - `tops`
 - `sets`
 - `bags`
+- `pants`
+- `skirts`
 
 Set `is_new: true` to include the item under New Arrivals. Change it to
 `false` when the item is no longer new.

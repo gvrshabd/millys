@@ -350,6 +350,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .swatch-tops { background: #D7A879; }
 .swatch-sets { background: #A6A7C4; }
 .swatch-bags { background: #B58A6A; }
+.swatch-pants { background: #8FA39A; }
+.swatch-skirts { background: #D0A3B3; }
 .swatch-new { background: var(--rose-deep); }
 .swatch-all { background: linear-gradient(135deg, var(--rose), var(--sage)); }
 

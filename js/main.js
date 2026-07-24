@@ -400,6 +400,10 @@ function initProductPage() {
       <p data-lang="en">${escapeHTML(product.description.en)}</p>
       <p data-lang="th">${escapeHTML(product.description.th)}</p>
 
+      <p class="section-note">${bilingualPair({
+        en: "Available colours / options",
+        th: "สี / ตัวเลือกที่มี"
+      })}</p>
       <div class="colour-dots" aria-label="Available colours">
         ${product.colours.map((colour) => `
           <span class="colour-chip">${bilingualPair(colour)}</span>`).join("")}
