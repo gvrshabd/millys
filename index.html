@@ -39,12 +39,23 @@
           <div><strong>4</strong><span data-lang="en">Ways to order</span><span data-lang="th">ช่องทางสั่งซื้อ</span></div>
         </div>
       </div>
-      <div class="hero-visual">
-        <div class="tag-float">
-          <span class="hole"></span>
-          <span data-lang="en">110 styles · Browse the full collection</span>
-          <span data-lang="th">110 แบบ · ดูสินค้าทั้งหมด</span>
-        </div>
+      <div class="hero-visual" id="homeShowcase"
+        role="region"
+        data-aria-en="Featured products"
+        data-aria-th="สินค้าแนะนำ"
+        aria-roledescription="carousel">
+        <div class="hero-showcase-stage"></div>
+        <button class="hero-showcase-arrow hero-showcase-prev" type="button"
+          data-aria-en="Previous featured product"
+          data-aria-th="ดูสินค้าแนะนำก่อนหน้า">
+          <span aria-hidden="true">←</span>
+        </button>
+        <button class="hero-showcase-arrow hero-showcase-next" type="button"
+          data-aria-en="Next featured product"
+          data-aria-th="ดูสินค้าแนะนำถัดไป">
+          <span aria-hidden="true">→</span>
+        </button>
+        <div class="hero-showcase-dots" aria-hidden="true"></div>
       </div>
     </div>
   </section>
@@ -53,8 +64,8 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <span class="eyebrow" data-lang="en">New in</span>
-          <span class="eyebrow" data-lang="th">มาใหม่</span>
+          <span class="eyebrow" data-lang="en">Selected styles</span>
+          <span class="eyebrow" data-lang="th">สไตล์ที่คัดสรร</span>
           <h2 data-lang="en">Featured pieces</h2>
           <h2 data-lang="th">สินค้าแนะนำ</h2>
         </div>

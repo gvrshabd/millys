@@ -52,6 +52,13 @@ const PRODUCTS = [
       "th": "เสื้อโบฮีเมียนแขนปีกผีเสื้อเอวรูด"
     },
     "category": "tops",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Butterfly-Sleeve Drawstring Top",
+        "th": "เสื้อแขนปีกผีเสื้อเอวรูด"
+      }
+    },
     "is_new": true,
     "price": 199,
     "fabric": {
@@ -912,6 +919,13 @@ const PRODUCTS = [
       "th": "กระเป๋าผ้าคอตตอนแท้ แพ็ก 3 ใบ (ใหญ่ กลาง เล็ก)"
     },
     "category": "bags",
+    "home_showcase": {
+      "image_index": 1,
+      "name": {
+        "en": "Cotton Bag Trio",
+        "th": "กระเป๋าผ้าคอตตอนแพ็ก 3 ใบ"
+      }
+    },
     "is_new": false,
     "price": 699,
     "fabric": {
@@ -1250,6 +1264,13 @@ const PRODUCTS = [
       "th": "ชุดเซ็ตกางเกง สไตล์โบฮีเมียน ฟรีไซส์ ผ้าคอตตอน ย้อมสี"
     },
     "category": "sets",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Dyed Cotton Bohemian Set",
+        "th": "ชุดเซ็ตผ้าคอตตอนย้อมสี"
+      }
+    },
     "is_new": false,
     "price": 899,
     "fabric": {
@@ -2855,6 +2876,13 @@ const PRODUCTS = [
       "th": "ชุดแซ่ก ชุดชายบาน  ชุดแซ่กผ้าเรยอน ชุดแซ่กร่ม ชุดแซ่กชายโค้ง ชุดร่มพิมพ์ลาย ชุดเดรส 8 สี"
     },
     "category": "dresses",
+    "home_showcase": {
+      "image_index": 5,
+      "name": {
+        "en": "Printed Rayon Umbrella Dress",
+        "th": "เดรสผ้าเรยอนชายบาน"
+      }
+    },
     "is_new": false,
     "price": 299,
     "fabric": {
@@ -11478,6 +11506,13 @@ const PRODUCTS = [
       "th": "กระโปรงผ้าต่อ กระโปรงค๊อตต๊อนผ้าต่อ กระโปรงยาว"
     },
     "category": "skirts",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Pleated Patchwork Skirt",
+        "th": "กระโปรงยาวผ้าต่อทรงพลีท"
+      }
+    },
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -12657,6 +12692,13 @@ const PRODUCTS = [
       "th": "เสื้อชีฟอง เสื้อค้างคาว เสื้อคลุม เสื้อเที่ยว เสื้อโบฮีเมียน"
     },
     "category": "kaftans",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Bohemian Chiffon Kaftan",
+        "th": "คาฟตันชีฟองสไตล์โบฮีเมียน"
+      }
+    },
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -13028,6 +13070,13 @@ const PRODUCTS = [
       "th": "กางเกงผ้าต่อ กางเกงค๊อตต๊อนผ้าต่อขาจั้ม"
     },
     "category": "pants",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Patchwork Cotton Pants",
+        "th": "กางเกงผ้าคอตตอนตัดต่อ"
+      }
+    },
     "is_new": false,
     "price": 259,
     "fabric": {

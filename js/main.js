@@ -44,6 +44,13 @@ function setLang(lang) {
   document.querySelectorAll("[data-alt-en][data-alt-th]").forEach((image) => {
     image.alt = safeLang === "th" ? image.dataset.altTh : image.dataset.altEn;
   });
+
+  document.querySelectorAll("[data-aria-en][data-aria-th]").forEach((element) => {
+    element.setAttribute(
+      "aria-label",
+      safeLang === "th" ? element.dataset.ariaTh : element.dataset.ariaEn
+    );
+  });
 }
 
 function initLangToggle() {
@@ -166,9 +173,6 @@ function initShopPage() {
     .filter((category) => PRODUCTS.some((product) => product.category === category));
   const filterData = [
     { key: "all", label: { en: "All", th: "ทั้งหมด" } },
-    ...(PRODUCTS.some((product) => product.is_new)
-      ? [{ key: "new", label: { en: "New arrivals", th: "มาใหม่" } }]
-      : []),
     ...populatedCategories.map((key) => ({ key, label: PRODUCT_CATEGORIES[key] }))
   ];
 
@@ -183,8 +187,7 @@ function initShopPage() {
 
   function applyFilter() {
     let list = PRODUCTS;
-    if (activeCategory === "new") list = PRODUCTS.filter((product) => product.is_new);
-    else if (activeCategory !== "all") {
+    if (activeCategory !== "all") {
       list = PRODUCTS.filter((product) => product.category === activeCategory);
     }
     renderGrid(grid, list);
@@ -209,10 +212,113 @@ function initShopPage() {
   applyFilter();
 }
 
+function homeShowcaseProducts() {
+  return Object.keys(PRODUCT_CATEGORIES).map((category) => (
+    PRODUCTS.find((product) => (
+      product.category === category && product.home_showcase && product.images?.length
+    )) || PRODUCTS.find((product) => product.category === category && product.images?.length)
+  )).filter(Boolean);
+}
+
+function initHomeShowcase() {
+  const root = document.getElementById("homeShowcase");
+  if (!root) return;
+
+  const stage = root.querySelector(".hero-showcase-stage");
+  const previousButton = root.querySelector(".hero-showcase-prev");
+  const nextButton = root.querySelector(".hero-showcase-next");
+  const dots = root.querySelector(".hero-showcase-dots");
+  const products = homeShowcaseProducts();
+  if (!stage || !previousButton || !nextButton || !dots || !products.length) return;
+
+  let activeIndex = 0;
+  let rotationTimer;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  dots.innerHTML = products.map(() => '<span class="hero-showcase-dot"></span>').join("");
+
+  function render(index) {
+    activeIndex = (index + products.length) % products.length;
+    const product = products[activeIndex];
+    const displayName = product.home_showcase?.name || product.name;
+    const requestedImage = Number(product.home_showcase?.image_index) || 0;
+    const image = product.images[requestedImage] || product.images[0];
+    const category = PRODUCT_CATEGORIES[product.category];
+    const showcaseImage = {
+      ...image,
+      alt: {
+        en: `${displayName.en} — ${category.en}`,
+        th: `${displayName.th} — ${category.th}`
+      }
+    };
+
+    stage.innerHTML = `
+      <a class="hero-showcase-link"
+        href="/product.html?code=${encodeURIComponent(product.code)}"
+        data-aria-en="View ${escapeHTML(displayName.en)}"
+        data-aria-th="ดู ${escapeHTML(displayName.th)}">
+        <div class="hero-showcase-media">
+          ${imageHTML(showcaseImage, product, { eager: activeIndex === 0 })}
+          <div class="hero-showcase-caption">
+            <span class="hero-showcase-category" data-lang="en">${escapeHTML(category.en)}</span>
+            <span class="hero-showcase-category" data-lang="th">${escapeHTML(category.th)}</span>
+            <p class="hero-showcase-name" data-lang="en">${escapeHTML(displayName.en)}</p>
+            <p class="hero-showcase-name" data-lang="th">${escapeHTML(displayName.th)}</p>
+          </div>
+        </div>
+      </a>`;
+
+    dots.querySelectorAll(".hero-showcase-dot").forEach((dot, dotIndex) => {
+      dot.classList.toggle("active", dotIndex === activeIndex);
+    });
+
+    const nextProduct = products[(activeIndex + 1) % products.length];
+    const nextImageIndex = Number(nextProduct.home_showcase?.image_index) || 0;
+    const nextImage = nextProduct.images[nextImageIndex] || nextProduct.images[0];
+    if (nextImage?.src) {
+      const preload = new Image();
+      preload.src = assetUrl(nextImage.src);
+    }
+
+    setLang(getLang());
+  }
+
+  function stopRotation() {
+    window.clearInterval(rotationTimer);
+  }
+
+  function startRotation() {
+    stopRotation();
+    if (reduceMotion.matches || document.hidden) return;
+    rotationTimer = window.setInterval(() => render(activeIndex + 1), 6500);
+  }
+
+  function move(direction) {
+    render(activeIndex + direction);
+    startRotation();
+  }
+
+  previousButton.addEventListener("click", () => move(-1));
+  nextButton.addEventListener("click", () => move(1));
+  root.addEventListener("mouseenter", stopRotation);
+  root.addEventListener("mouseleave", startRotation);
+  root.addEventListener("focusin", stopRotation);
+  root.addEventListener("focusout", (event) => {
+    if (!root.contains(event.relatedTarget)) startRotation();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopRotation();
+    else startRotation();
+  });
+
+  render(0);
+  startRotation();
+}
+
 function initHomeFeatured() {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
-  const featured = PRODUCTS.filter((product) => product.is_new).slice(0, 4);
+  const featured = homeShowcaseProducts().slice(0, 4);
   renderGrid(grid, featured.length ? featured : PRODUCTS.slice(0, 4));
 }
 
@@ -612,6 +718,7 @@ async function initLayout() {
 document.addEventListener("DOMContentLoaded", () => {
   initSEO();
   initAnalytics();
+  initHomeShowcase();
   initHomeFeatured();
   initHomeStats();
   initShopPage();
