@@ -5,6 +5,10 @@ lives in one file:
 
 `js/products.js`
 
+Product codes are internal identifiers. They are required in the data file and
+page URL, but are not displayed in the customer-facing catalogue or product
+details.
+
 Business contact details and shop-wide marketplace links live in:
 
 `js/site-config.js`
@@ -12,10 +16,14 @@ Business contact details and shop-wide marketplace links live in:
 Google Analytics and Search Console fields are also in `js/site-config.js`. They
 can remain empty until those accounts are created.
 
-## Important: work on a branch
+## Important: prepare changes carefully
 
-Cloudflare automatically publishes the `main` branch. To keep an unfinished
-change off the live website:
+Cloudflare publishes `main`, and the current Workers integration has also been
+observed building other pushed branches. Do not assume that a GitHub branch is
+a private preview. Prepare and check unfinished product data locally before
+pushing it to GitHub.
+
+For an organized review history:
 
 1. Open the `gvrshabd/millys` repository on GitHub.
 2. Open the branch menu that currently says `main`.
@@ -24,8 +32,8 @@ change off the live website:
 5. Make and commit your edits on that branch.
 6. Review the branch before opening and merging a pull request.
 
-Do not edit or commit directly to `main` unless you want Cloudflare to deploy
-the change.
+Only merge into `main` when the product is ready to become the official
+production version.
 
 ## Change stock status
 
@@ -149,6 +157,9 @@ closing `];`, add a comma between products, and update every field.
   }
 }
 ```
+
+If care instructions are unavailable, use `care: null`. The care row will be
+omitted from that product page.
 
 Allowed category values:
 

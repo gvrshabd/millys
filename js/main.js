@@ -134,7 +134,6 @@ function productCardHTML(product) {
       </div>
       <div class="tag-name" data-lang="en">${escapeHTML(product.name.en)}</div>
       <div class="tag-name" data-lang="th">${escapeHTML(product.name.th)}</div>
-      <span class="tag-code">${escapeHTML(product.code)}</span>
       <div class="tag-price">฿${product.price.toLocaleString("en-US")}</div>
     </a>`;
 }
@@ -393,7 +392,6 @@ function initProductPage() {
           ${bilingualPair(category)}
         </a>
       </nav>
-      <span class="pd-code">${escapeHTML(product.code)}</span>
       <h1 data-lang="en">${escapeHTML(product.name.en)}</h1>
       <h1 data-lang="th">${escapeHTML(product.name.th)}</h1>
       <div class="pd-price">฿${product.price.toLocaleString("en-US")}</div>
@@ -424,10 +422,11 @@ function initProductPage() {
                 <td>${bilingualPair(product.fabric)}</td>
               </tr>
               ${measurementRows(product)}
-              <tr>
-                <th scope="row">${bilingualPair({ en: "Care", th: "การดูแลรักษา" })}</th>
-                <td>${bilingualPair(product.care)}</td>
-              </tr>
+              ${product.care ? `
+                <tr>
+                  <th scope="row">${bilingualPair({ en: "Care", th: "การดูแลรักษา" })}</th>
+                  <td>${bilingualPair(product.care)}</td>
+                </tr>` : ""}
             </tbody>
           </table>
         </div>
