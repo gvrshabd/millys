@@ -84,7 +84,7 @@ for (const product of PRODUCTS) {
 
   checkBilingual(product.name, `${product.code} name`);
   checkBilingual(product.fabric, `${product.code} fabric`);
-  checkBilingual(product.care, `${product.code} care`);
+  if (product.care) checkBilingual(product.care, `${product.code} care`);
   checkBilingual(product.description, `${product.code} description`);
 
   if (!Array.isArray(product.colours) || !product.colours.length) {

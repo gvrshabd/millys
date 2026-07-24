@@ -201,5 +201,108 @@ const PRODUCTS = [
       th: "คาฟตันผ้าลินินเรียบง่าย เนื้อนุ่มสบายผิว ใส่ได้หลายโอกาส"
     },
     marketplace_links: { line: "", tiktok: "", shopee: "", lazada: "" }
+  },
+  {
+    code: "MLY-TP-001",
+    name: {
+      en: "Bohemian Butterfly-Sleeve Drawstring Top",
+      th: "เสื้อโบฮีเมียนแขนปีกผีเสื้อเอวรูด"
+    },
+    category: "tops",
+    is_new: true,
+    price: 199,
+    fabric: {
+      en: "Polyester",
+      th: "โพลีเอสเตอร์"
+    },
+    colours: [
+      { en: "Navy", th: "สีกรมท่า" },
+      { en: "Orange", th: "สีส้ม" },
+      { en: "Green", th: "สีเขียว" },
+      { en: "Black", th: "สีดำ" }
+    ],
+    measurements: [
+      {
+        label: { en: "Size", th: "ขนาด" },
+        value: { en: "One Size", th: "ฟรีไซส์" }
+      },
+      {
+        label: { en: "Bust", th: "รอบอก" },
+        value: { en: "Fits 34-54 in (up to 140 cm)", th: "ใส่ได้ตั้งแต่ 34-54 นิ้ว (ประมาณ 140 ซม.)" }
+      },
+      {
+        label: { en: "Length", th: "ความยาว" },
+        value: { en: "90 cm (about 35 in)", th: "90 ซม. (ประมาณ 35 นิ้ว)" }
+      },
+      {
+        label: { en: "Shoulder / batwing width", th: "ไหล่ / ความกว้างทรงปีก" },
+        value: { en: "140 cm", th: "140 ซม." }
+      },
+      {
+        label: { en: "Waist", th: "รอบเอว" },
+        value: { en: "140 cm, adjustable drawstring", th: "140 ซม. พร้อมเชือกรูดปรับได้" }
+      },
+      {
+        label: { en: "Sleeve length", th: "ความยาวแขน" },
+        value: { en: "30 cm", th: "30 ซม." }
+      }
+    ],
+    care: null,
+    stock: "in_stock",
+    images: [
+      {
+        src: "products/mly-tp-001-navy-front.jpg",
+        alt: {
+          en: "Front view of the navy bohemian butterfly-sleeve top",
+          th: "ภาพด้านหน้าของเสื้อโบฮีเมียนแขนปีกผีเสื้อสีกรมท่า"
+        }
+      },
+      {
+        src: "products/mly-tp-001-navy-alt.jpg",
+        alt: {
+          en: "Navy bohemian butterfly-sleeve top shown from an alternate angle",
+          th: "เสื้อโบฮีเมียนแขนปีกผีเสื้อสีกรมท่าในอีกมุมหนึ่ง"
+        }
+      },
+      {
+        src: "products/mly-tp-001-orange-front.jpg",
+        alt: {
+          en: "Front view of the orange bohemian butterfly-sleeve top",
+          th: "ภาพด้านหน้าของเสื้อโบฮีเมียนแขนปีกผีเสื้อสีส้ม"
+        }
+      },
+      {
+        src: "products/mly-tp-001-green-front.jpg",
+        alt: {
+          en: "Front view of the green bohemian butterfly-sleeve top",
+          th: "ภาพด้านหน้าของเสื้อโบฮีเมียนแขนปีกผีเสื้อสีเขียว"
+        }
+      },
+      {
+        src: "products/mly-tp-001-black-front.jpg",
+        alt: {
+          en: "Front view of the black bohemian butterfly-sleeve top",
+          th: "ภาพด้านหน้าของเสื้อโบฮีเมียนแขนปีกผีเสื้อสีดำ"
+        }
+      },
+      {
+        src: "products/mly-tp-001-black-alt.jpg",
+        alt: {
+          en: "Black bohemian butterfly-sleeve top shown from an alternate angle",
+          th: "เสื้อโบฮีเมียนแขนปีกผีเสื้อสีดำในอีกมุมหนึ่ง"
+        }
+      }
+    ],
+    video: null,
+    description: {
+      en: "A lightweight floral bohemian top with butterfly-style batwing sleeves and an adjustable drawstring below the bust. Its relaxed one-size shape is comfortable for casual outings, beach days, or wearing at home.",
+      th: "เสื้อโบฮีเมียนลายดอก แขนปีกผีเสื้อทรงค้างคาว พร้อมเชือกรูดใต้อกเพื่อปรับทรง ฟรีไซส์ เนื้อผ้าเบา ใส่สบาย เหมาะสำหรับใส่เที่ยว เดินเล่นชายหาด หรือใส่อยู่บ้าน"
+    },
+    marketplace_links: {
+      line: "",
+      tiktok: "",
+      shopee: "",
+      lazada: "https://www.lazada.co.th/products/a-a-i4796572163-s19816173770.html"
+    }
   }
 ];
