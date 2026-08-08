@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selected Product Catalogue</title>
+<meta name="description" content="A printable catalogue of selected products.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="print-page">
+  <header class="print-toolbar">
+    <a href="/shop.html" class="btn btn-outline"><span data-lang="en">Back to catalogue</span><span data-lang="th">กลับไปหน้าสินค้า</span></a>
+    <p><span data-lang="en">Selected products:</span><span data-lang="th">สินค้าที่เลือก:</span> <strong id="printCount">0</strong></p>
+    <button type="button" class="btn" id="printButton"><span data-lang="en">Print / save as PDF</span><span data-lang="th">พิมพ์ / บันทึกเป็น PDF</span></button>
+  </header>
+  <main class="print-catalogue" id="printCatalogue"></main>
+  <script src="/js/site-config.js"></script>
+  <script src="/js/products.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

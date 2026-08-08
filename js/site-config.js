@@ -18,8 +18,6 @@ const SITE_CONFIG = {
     phone_href: "tel:+66970410363",
     email: "supportatmillys@gmail.com",
     email_href: "mailto:supportatmillys@gmail.com",
-    address: "56, 24 Ratchadaphisek 16 Alley, Wat Tha Phra, Bangkok Yai, Bangkok 10600",
-    google_maps: "https://maps.app.goo.gl/yMDrdGXoSSGo9C1C9",
     hours_en: "8.30 AM - 6.30 PM (GMT +7)",
     hours_th: "08.30-18.30 น. (GMT +7)"
   },

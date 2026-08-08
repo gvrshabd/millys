@@ -26,14 +26,47 @@
       <span class="eyebrow" data-lang="th">สินค้าทั้งหมด</span>
       <h1 data-lang="en">Shop</h1>
       <h1 data-lang="th">สินค้า</h1>
-      <p style="max-width:56ch;" data-lang="en">Each product includes the measurements, fabric information and options provided by the seller. Tap any item for full details and ordering links.</p>
-      <p style="max-width:56ch;" data-lang="th">สินค้าทุกชิ้นแสดงขนาด เนื้อผ้า และตัวเลือกตามข้อมูลจากผู้ขาย แตะเพื่อดูรายละเอียดและลิงก์สั่งซื้อ</p>
+      <p style="max-width:62ch;" data-lang="en">Search the catalogue, compare the options provided for each item, and collect products in one inquiry.</p>
+      <p style="max-width:62ch;" data-lang="th">ค้นหาและเปรียบเทียบตัวเลือกของสินค้า แล้วรวบรวมสินค้าที่สนใจไว้ในรายการสอบถามเดียว</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
+      <div class="catalogue-tools" aria-label="Catalogue search and filters">
+        <div class="catalogue-search">
+          <label for="catalogueSearch">
+            <span data-lang="en">Search catalogue</span><span data-lang="th">ค้นหาสินค้า</span>
+          </label>
+          <input id="catalogueSearch" type="search" autocomplete="off"
+            data-placeholder-en="Name, code, category, colour…"
+            data-placeholder-th="ชื่อ รหัส หมวดหมู่ สี…">
+        </div>
+        <div class="catalogue-select">
+          <label for="stockFilter"><span data-lang="en">Availability</span><span data-lang="th">สถานะสินค้า</span></label>
+          <select id="stockFilter">
+            <option value="all" data-en="All availability" data-th="สถานะทั้งหมด">All availability</option>
+            <option value="available" data-en="Available" data-th="มีสินค้า">Available</option>
+            <option value="sold_out" data-en="Sold out" data-th="สินค้าหมด">Sold out</option>
+          </select>
+        </div>
+        <div class="catalogue-select">
+          <label for="sortProducts"><span data-lang="en">Sort by</span><span data-lang="th">เรียงตาม</span></label>
+          <select id="sortProducts">
+            <option value="recommended" data-en="Recommended" data-th="แนะนำ">Recommended</option>
+            <option value="name" data-en="Name A–Z" data-th="ชื่อตามลำดับ">Name A–Z</option>
+            <option value="price_low" data-en="Price: low to high" data-th="ราคา: ต่ำไปสูง">Price: low to high</option>
+            <option value="price_high" data-en="Price: high to low" data-th="ราคา: สูงไปต่ำ">Price: high to low</option>
+          </select>
+        </div>
+      </div>
       <div class="category-row" id="categoryFilters" aria-label="Product categories"></div>
+      <div class="catalogue-status">
+        <p id="catalogueResults" aria-live="polite"></p>
+        <button type="button" class="text-button" id="resetCatalogue">
+          <span data-lang="en">Reset filters</span><span data-lang="th">ล้างตัวกรอง</span>
+        </button>
+      </div>
       <div class="product-grid" id="productGrid"></div>
     </div>
   </section>

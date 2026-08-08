@@ -171,8 +171,33 @@ Allowed category values:
 - `pants`
 - `skirts`
 
-Set `is_new: true` to include the item under New Arrivals. Change it to
-`false` when the item is no longer new.
+Set `is_new: true` to show a small "New" badge on the product card. Change it
+to `false` when the item is no longer new. There is no separate New Arrivals
+category.
+
+## Optional exact variant availability
+
+Do not add a size/colour availability matrix unless the combinations have
+been confirmed. When exact combination data becomes available, add this
+optional field to the product:
+
+```js
+variants: [
+  {
+    size: { en: "S", th: "S" },
+    colour: { en: "Blue", th: "สีน้ำเงิน" },
+    available: true
+  },
+  {
+    size: { en: "M", th: "M" },
+    colour: { en: "Blue", th: "สีน้ำเงิน" },
+    available: false
+  }
+]
+```
+
+The website displays the matrix only when `variants` exists and contains real
+data. Leave the field out when availability is unknown.
 
 ## Product-specific order links
 

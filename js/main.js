@@ -17,6 +17,26 @@ const ORDER_CHANNELS = [
   { key: "lazada", label: "Lazada" }
 ];
 
+const INQUIRY_STORAGE_KEY = "milly_inquiry_v1";
+
+function storageGet(storage, key, fallback = null) {
+  try {
+    const value = storage.getItem(key);
+    return value === null ? fallback : value;
+  } catch {
+    return fallback;
+  }
+}
+
+function storageSet(storage, key, value) {
+  try {
+    storage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function escapeHTML(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -27,12 +47,12 @@ function escapeHTML(value) {
 }
 
 function getLang() {
-  return localStorage.getItem("milly_lang") || "en";
+  return storageGet(localStorage, "milly_lang", "en") === "th" ? "th" : "en";
 }
 
 function setLang(lang) {
   const safeLang = lang === "th" ? "th" : "en";
-  localStorage.setItem("milly_lang", safeLang);
+  storageSet(localStorage, "milly_lang", safeLang);
   document.documentElement.setAttribute("lang", safeLang);
 
   document.querySelectorAll("[data-set-lang]").forEach((button) => {
@@ -51,12 +71,26 @@ function setLang(lang) {
       safeLang === "th" ? element.dataset.ariaTh : element.dataset.ariaEn
     );
   });
+
+  document.querySelectorAll("[data-placeholder-en][data-placeholder-th]").forEach((element) => {
+    element.placeholder = safeLang === "th"
+      ? element.dataset.placeholderTh
+      : element.dataset.placeholderEn;
+  });
+
+  document.querySelectorAll("option[data-en][data-th]").forEach((option) => {
+    option.textContent = safeLang === "th" ? option.dataset.th : option.dataset.en;
+  });
+
 }
 
 function initLangToggle() {
   setLang(getLang());
   document.querySelectorAll("[data-set-lang]").forEach((button) => {
-    button.addEventListener("click", () => setLang(button.dataset.setLang));
+    button.addEventListener("click", () => {
+      setLang(button.dataset.setLang);
+      document.dispatchEvent(new CustomEvent("milly:language", { detail: getLang() }));
+    });
   });
 }
 
@@ -118,6 +152,32 @@ function imageHTML(image, product, options = {}) {
     decoding="async"${fetchPriority}>`;
 }
 
+function productSizeSummary(product) {
+  const measurements = product.measurements || [];
+  const preferredRows = measurements.filter((measurement) => (
+    /size|fit|ขนาด/i.test(`${measurement.label?.en || ""} ${measurement.label?.th || ""}`)
+  ));
+  const sizeRows = (preferredRows.length ? preferredRows : measurements).slice(0, 2);
+  if (!sizeRows.length) return null;
+  return {
+    en: sizeRows.map((row) => `${row.label.en}: ${row.value.en}`).join(" · "),
+    th: sizeRows.map((row) => `${row.label.th}: ${row.value.th}`).join(" · ")
+  };
+}
+
+function productOptionSummaryHTML(product) {
+  const size = productSizeSummary(product);
+  const colours = (product.colours || []).slice(0, 2);
+  const more = Math.max(0, (product.colours || []).length - colours.length);
+  return `<div class="tag-options">
+    ${size ? `<p><span data-lang="en">${escapeHTML(size.en)}</span><span data-lang="th">${escapeHTML(size.th)}</span></p>` : ""}
+    ${colours.length ? `<p class="tag-colours">
+      <span data-lang="en">Colours: ${escapeHTML(colours.map((colour) => colour.en).join(", "))}${more ? ` +${more}` : ""}</span>
+      <span data-lang="th">สี: ${escapeHTML(colours.map((colour) => colour.th).join(", "))}${more ? ` +${more}` : ""}</span>
+    </p>` : ""}
+  </div>`;
+}
+
 function productCardHTML(product) {
   const stock = STOCK_LABELS[product.stock];
   const photo = product.images?.length
@@ -125,8 +185,9 @@ function productCardHTML(product) {
     : placeholderPhoto();
 
   return `
-    <a class="tag-card" href="/product.html?code=${encodeURIComponent(product.code)}">
+    <article class="tag-card">
       <span class="tag-hole" aria-hidden="true"></span>
+      <a class="tag-product-link" href="/product.html?code=${encodeURIComponent(product.code)}">
       <div class="tag-photo">
         ${photo}
         ${product.is_new ? `
@@ -142,7 +203,12 @@ function productCardHTML(product) {
       <div class="tag-name" data-lang="en">${escapeHTML(product.name.en)}</div>
       <div class="tag-name" data-lang="th">${escapeHTML(product.name.th)}</div>
       <div class="tag-price">฿${product.price.toLocaleString("en-US")}</div>
-    </a>`;
+      </a>
+      ${productOptionSummaryHTML(product)}
+      <button type="button" class="inquiry-add" data-add-inquiry="${escapeHTML(product.code)}">
+        <span data-lang="en">Add to inquiry</span><span data-lang="th">เพิ่มในรายการสอบถาม</span>
+      </button>
+    </article>`;
 }
 
 function renderGrid(target, products) {
@@ -167,7 +233,12 @@ function filterLabelHTML(key, label) {
 function initShopPage() {
   const grid = document.getElementById("productGrid");
   const filters = document.getElementById("categoryFilters");
-  if (!grid || !filters) return;
+  const search = document.getElementById("catalogueSearch");
+  const stockFilter = document.getElementById("stockFilter");
+  const sort = document.getElementById("sortProducts");
+  const results = document.getElementById("catalogueResults");
+  const reset = document.getElementById("resetCatalogue");
+  if (!grid || !filters || !search || !stockFilter || !sort || !results || !reset) return;
 
   const populatedCategories = Object.keys(PRODUCT_CATEGORIES)
     .filter((category) => PRODUCTS.some((product) => product.category === category));
@@ -185,12 +256,52 @@ function initShopPage() {
   let activeCategory = params.get("category") || "all";
   if (!filterData.some((filter) => filter.key === activeCategory)) activeCategory = "all";
 
+  search.value = params.get("q") || "";
+  stockFilter.value = ["available", "sold_out"].includes(params.get("stock")) ? params.get("stock") : "all";
+  sort.value = ["name", "price_low", "price_high"].includes(params.get("sort")) ? params.get("sort") : "recommended";
+
+  function searchableText(product) {
+    const category = PRODUCT_CATEGORIES[product.category];
+    return [
+      product.code, product.name.en, product.name.th,
+      product.description.en, product.description.th,
+      category.en, category.th,
+      ...(product.colours || []).flatMap((colour) => [colour.en, colour.th])
+    ].join(" ").toLocaleLowerCase();
+  }
+
+  function updateUrl() {
+    const url = new URL(window.location);
+    const values = {
+      category: activeCategory === "all" ? "" : activeCategory,
+      q: search.value.trim(),
+      stock: stockFilter.value === "all" ? "" : stockFilter.value,
+      sort: sort.value === "recommended" ? "" : sort.value
+    };
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
+    });
+    window.history.replaceState({}, "", url);
+  }
+
   function applyFilter() {
-    let list = PRODUCTS;
+    let list = [...PRODUCTS];
     if (activeCategory !== "all") {
-      list = PRODUCTS.filter((product) => product.category === activeCategory);
+      list = list.filter((product) => product.category === activeCategory);
     }
+    const query = search.value.trim().toLocaleLowerCase();
+    if (query) list = list.filter((product) => searchableText(product).includes(query));
+    if (stockFilter.value === "available") list = list.filter((product) => product.stock !== "sold_out");
+    if (stockFilter.value === "sold_out") list = list.filter((product) => product.stock === "sold_out");
+    if (sort.value === "name") list.sort((a, b) => a.name[getLang()].localeCompare(b.name[getLang()]));
+    if (sort.value === "price_low") list.sort((a, b) => a.price - b.price);
+    if (sort.value === "price_high") list.sort((a, b) => b.price - a.price);
     renderGrid(grid, list);
+    const countLabel = getLang() === "th" ? `พบ ${list.length} รายการ` : `${list.length} product${list.length === 1 ? "" : "s"}`;
+    results.textContent = countLabel;
+    const hasFilters = activeCategory !== "all" || query || stockFilter.value !== "all" || sort.value !== "recommended";
+    reset.hidden = !hasFilters;
     filters.querySelectorAll(".swatch-pill").forEach((button) => {
       const active = button.dataset.category === activeCategory;
       button.classList.toggle("active", active);
@@ -199,15 +310,48 @@ function initShopPage() {
   }
 
   filters.querySelectorAll(".swatch-pill").forEach((button) => {
-    button.addEventListener("click", () => {
+      button.addEventListener("click", () => {
       activeCategory = button.dataset.category;
-      const url = new URL(window.location);
-      if (activeCategory === "all") url.searchParams.delete("category");
-      else url.searchParams.set("category", activeCategory);
-      window.history.replaceState({}, "", url);
+      updateUrl();
       applyFilter();
     });
   });
+
+  let searchTimer;
+  search.addEventListener("input", () => {
+    window.clearTimeout(searchTimer);
+    searchTimer = window.setTimeout(() => { updateUrl(); applyFilter(); }, 120);
+  });
+  [stockFilter, sort].forEach((control) => control.addEventListener("change", () => {
+    updateUrl();
+    applyFilter();
+  }));
+  reset.addEventListener("click", () => {
+    activeCategory = "all";
+    search.value = "";
+    stockFilter.value = "all";
+    sort.value = "recommended";
+    updateUrl();
+    applyFilter();
+    search.focus();
+  });
+  document.addEventListener("milly:language", applyFilter);
+  grid.addEventListener("click", (event) => {
+    if (!event.target.closest(".tag-product-link")) return;
+    storageSet(sessionStorage, "milly_shop_state", JSON.stringify({
+      url: window.location.href,
+      scrollY: window.scrollY
+    }));
+  });
+
+  const savedState = storageGet(sessionStorage, "milly_shop_state");
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState);
+      if (state.url === window.location.href) requestAnimationFrame(() => window.scrollTo(0, state.scrollY || 0));
+    } catch { /* Ignore damaged session state. */ }
+    storageSet(sessionStorage, "milly_shop_state", "");
+  }
 
   applyFilter();
 }
@@ -340,6 +484,26 @@ function measurementRows(product) {
       <th scope="row">${bilingualPair(measurement.label)}</th>
       <td>${bilingualPair(measurement.value)}</td>
     </tr>`).join("");
+}
+
+function variantMatrixHTML(product) {
+  if (!Array.isArray(product.variants) || !product.variants.length) return "";
+  const sizes = [...new Set(product.variants.map((variant) => variant.size?.en).filter(Boolean))];
+  const colours = [...new Map(product.variants
+    .filter((variant) => variant.colour?.en)
+    .map((variant) => [variant.colour.en, variant.colour])).values()];
+  if (!sizes.length || !colours.length) return "";
+  return `<section class="variant-matrix" aria-labelledby="variant-heading">
+    <h2 id="variant-heading">${bilingualPair({ en: "Available combinations", th: "ตัวเลือกที่มี" })}</h2>
+    <div class="table-scroll"><table class="pd-table">
+      <thead><tr><th scope="col">${bilingualPair({ en: "Colour", th: "สี" })}</th>${sizes.map((size) => `<th scope="col">${escapeHTML(size)}</th>`).join("")}</tr></thead>
+      <tbody>${colours.map((colour) => `<tr><th scope="row">${bilingualPair(colour)}</th>${sizes.map((size) => {
+        const variant = product.variants.find((item) => item.size?.en === size && item.colour?.en === colour.en);
+        const available = variant?.available === true;
+        return `<td><span aria-label="${available ? "Available" : "Unavailable"}">${available ? "✓" : "—"}</span></td>`;
+      }).join("")}</tr>`).join("")}</tbody>
+    </table></div>
+  </section>`;
 }
 
 function productOrderButtons(product) {
@@ -515,6 +679,8 @@ function initProductPage() {
           <span class="colour-chip">${bilingualPair(colour)}</span>`).join("")}
       </div>
 
+      ${variantMatrixHTML(product)}
+
       <section class="product-sizing" aria-labelledby="fit-heading">
         <h2 id="fit-heading">${bilingualPair({
           en: "Fit & measurements",
@@ -542,11 +708,294 @@ function initProductPage() {
         </div>
       </section>
 
+      <button type="button" class="btn inquiry-product-btn" data-add-inquiry="${escapeHTML(product.code)}">
+        <span data-lang="en">Add to inquiry</span><span data-lang="th">เพิ่มในรายการสอบถาม</span>
+      </button>
+
       ${productOrderButtons(product)}
     </div>`;
 
   setLang(getLang());
   initProductGallery(product);
+}
+
+let inquiryMemory = [];
+
+function getInquiry() {
+  const raw = storageGet(localStorage, INQUIRY_STORAGE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        inquiryMemory = parsed.filter((item) => PRODUCTS.some((product) => product.code === item.code));
+      }
+    } catch { /* Continue with the in-memory copy. */ }
+  }
+  return inquiryMemory;
+}
+
+function saveInquiry(items) {
+  inquiryMemory = items;
+  storageSet(localStorage, INQUIRY_STORAGE_KEY, JSON.stringify(items));
+  updateInquiryUI();
+}
+
+function inquiryProduct(code) {
+  return PRODUCTS.find((product) => product.code === code);
+}
+
+function updateInquiryUI() {
+  const items = getInquiry();
+  document.querySelectorAll("[data-inquiry-count]").forEach((count) => {
+    count.textContent = items.length;
+  });
+  document.querySelectorAll("[data-add-inquiry]").forEach((button) => {
+    const added = items.some((item) => item.code === button.dataset.addInquiry);
+    button.classList.toggle("added", added);
+    button.setAttribute("aria-pressed", added ? "true" : "false");
+  });
+}
+
+function inquiryFieldsHTML(item, product) {
+  const lang = getLang();
+  const colourOptions = (product.colours || []).map((colour) => `
+    <option value="${escapeHTML(colour.en)}"${item.colour === colour.en ? " selected" : ""}>
+      ${escapeHTML(lang === "th" ? colour.th : colour.en)}
+    </option>`).join("");
+  return `<div class="inquiry-fields">
+    <label>
+      <span data-lang="en">Quantity</span><span data-lang="th">จำนวน</span>
+      <input type="number" inputmode="numeric" min="1" max="999" value="${Math.max(1, Number(item.quantity) || 1)}" data-inquiry-field="quantity">
+    </label>
+    <label>
+      <span data-lang="en">Desired size</span><span data-lang="th">ขนาดที่ต้องการ</span>
+      <input type="text" maxlength="50" value="${escapeHTML(item.size || "")}" data-inquiry-field="size"
+        data-placeholder-en="Optional preference" data-placeholder-th="ระบุได้ถ้าต้องการ">
+    </label>
+    <label>
+      <span data-lang="en">Desired colour</span><span data-lang="th">สีที่ต้องการ</span>
+      <select data-inquiry-field="colour">
+        <option value="">${lang === "th" ? "ยังไม่ระบุ" : "No preference yet"}</option>
+        ${colourOptions}
+      </select>
+    </label>
+    <label class="inquiry-note-field">
+      <span data-lang="en">Note</span><span data-lang="th">หมายเหตุ</span>
+      <textarea rows="2" maxlength="300" data-inquiry-field="note"
+        data-placeholder-en="Optional question or detail" data-placeholder-th="คำถามหรือรายละเอียดเพิ่มเติม">${escapeHTML(item.note || "")}</textarea>
+    </label>
+  </div>`;
+}
+
+function inquiryItemHTML(item) {
+  const product = inquiryProduct(item.code);
+  if (!product) return "";
+  const image = product.images?.[0];
+  const category = PRODUCT_CATEGORIES[product.category];
+  return `<article class="inquiry-item" data-inquiry-code="${escapeHTML(product.code)}">
+    <div class="inquiry-item-head">
+      <a class="inquiry-thumb" href="/product.html?code=${encodeURIComponent(product.code)}">
+        ${image ? imageHTML(image, product) : placeholderPhoto()}
+      </a>
+      <div>
+        <p class="inquiry-category">${bilingualPair(category)}</p>
+        <a class="inquiry-name" href="/product.html?code=${encodeURIComponent(product.code)}">
+          <span data-lang="en">${escapeHTML(product.name.en)}</span>
+          <span data-lang="th">${escapeHTML(product.name.th)}</span>
+        </a>
+        <p class="inquiry-code">${escapeHTML(product.code)}</p>
+      </div>
+      <button type="button" class="inquiry-remove" data-remove-inquiry="${escapeHTML(product.code)}"
+        data-aria-en="Remove ${escapeHTML(product.name.en)}" data-aria-th="ลบ ${escapeHTML(product.name.th)}">×</button>
+    </div>
+    ${inquiryFieldsHTML(item, product)}
+  </article>`;
+}
+
+function inquiryMessage(items) {
+  const lang = getLang();
+  const intro = lang === "th"
+    ? "สวัสดี Milly's\n\nฉันต้องการสอบถามเกี่ยวกับสินค้าต่อไปนี้:"
+    : "Hello Milly's,\n\nI would like to inquire about the following products:";
+  const lines = items.map((item, index) => {
+    const product = inquiryProduct(item.code);
+    if (!product) return "";
+    const name = product.name[lang];
+    const details = [
+      `${lang === "th" ? "จำนวน" : "Quantity"}: ${Math.max(1, Number(item.quantity) || 1)}`,
+      item.size ? `${lang === "th" ? "ขนาดที่ต้องการ" : "Desired size"}: ${item.size}` : "",
+      item.colour ? `${lang === "th" ? "สีที่ต้องการ" : "Desired colour"}: ${item.colour}` : "",
+      item.note ? `${lang === "th" ? "หมายเหตุ" : "Note"}: ${item.note}` : "",
+      `${lang === "th" ? "สินค้า" : "Product"}: ${SITE_CONFIG.site_url}/product.html?code=${encodeURIComponent(product.code)}`
+    ].filter(Boolean);
+    return `${index + 1}. ${name} (${product.code})\n${details.map((detail) => `   ${detail}`).join("\n")}`;
+  }).filter(Boolean);
+  const ending = lang === "th"
+    ? "\n\nโปรดยืนยันตัวเลือก ราคา และความพร้อมของสินค้า ขอบคุณค่ะ/ครับ"
+    : "\n\nPlease confirm the options, price, and availability. Thank you.";
+  return `${intro}\n\n${lines.join("\n\n")}${ending}`;
+}
+
+function renderInquiryDrawer() {
+  const body = document.getElementById("inquiryBody");
+  const clear = document.getElementById("clearInquiry");
+  const email = document.getElementById("emailInquiry");
+  const copy = document.getElementById("copyInquiry");
+  const print = document.getElementById("printInquiry");
+  if (!body || !clear || !email || !copy || !print) return;
+  const items = getInquiry();
+  body.innerHTML = items.length
+    ? items.map(inquiryItemHTML).join("")
+    : `<div class="inquiry-empty">
+      <p data-lang="en">Your inquiry is empty.</p><p data-lang="th">ยังไม่มีสินค้าในรายการสอบถาม</p>
+      <a class="btn btn-outline" href="/shop.html"><span data-lang="en">Browse catalogue</span><span data-lang="th">ดูสินค้า</span></a>
+    </div>`;
+  [clear, email, copy, print].forEach((control) => { control.disabled = !items.length; });
+  print.setAttribute("aria-disabled", items.length ? "false" : "true");
+  updateInquiryUI();
+  setLang(getLang());
+}
+
+function showInquiryNotice(en, th) {
+  const notice = document.getElementById("inquiryNotice");
+  if (!notice) return;
+  notice.textContent = getLang() === "th" ? th : en;
+  window.clearTimeout(showInquiryNotice.timer);
+  showInquiryNotice.timer = window.setTimeout(() => { notice.textContent = ""; }, 4000);
+}
+
+async function copyInquiryText() {
+  const text = inquiryMessage(getInquiry());
+  let copied = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    copied = true;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    copied = document.execCommand("copy");
+    textarea.remove();
+  }
+  showInquiryNotice(
+    copied ? "Inquiry copied." : "Could not copy automatically. Please select and copy your notes.",
+    copied ? "คัดลอกรายการสอบถามแล้ว" : "ไม่สามารถคัดลอกอัตโนมัติได้ กรุณาเลือกและคัดลอกข้อความ"
+  );
+}
+
+function initInquiry() {
+  const dialog = document.createElement("dialog");
+  dialog.id = "inquiryDialog";
+  dialog.className = "inquiry-dialog";
+  dialog.innerHTML = `<div class="inquiry-drawer">
+    <header class="inquiry-header">
+      <div><p class="eyebrow" data-lang="en">Saved on this device</p><p class="eyebrow" data-lang="th">บันทึกบนอุปกรณ์นี้</p>
+      <h2 data-lang="en">Inquiry basket</h2><h2 data-lang="th">รายการสอบถาม</h2></div>
+      <button type="button" class="inquiry-close" data-close-inquiry data-aria-en="Close inquiry" data-aria-th="ปิดรายการสอบถาม">×</button>
+    </header>
+    <div class="inquiry-body" id="inquiryBody"></div>
+    <footer class="inquiry-footer">
+      <p class="inquiry-disclaimer" data-lang="en">This is a request for information—not a purchase, reservation, or automatic submission. Milly's will confirm options, availability, and price.</p>
+      <p class="inquiry-disclaimer" data-lang="th">นี่คือคำขอข้อมูล ไม่ใช่การสั่งซื้อ การจอง หรือการส่งอัตโนมัติ Milly's จะยืนยันตัวเลือก สินค้า และราคาอีกครั้ง</p>
+      <p class="inquiry-notice" id="inquiryNotice" aria-live="polite"></p>
+      <div class="inquiry-actions">
+        <button type="button" class="btn" id="emailInquiry"><span data-lang="en">Open email draft</span><span data-lang="th">เปิดอีเมลฉบับร่าง</span></button>
+        <button type="button" class="btn btn-outline" id="copyInquiry"><span data-lang="en">Copy inquiry</span><span data-lang="th">คัดลอกรายการ</span></button>
+        <a class="btn btn-outline" id="printInquiry" href="/catalogue-print.html" target="_blank"><span data-lang="en">Print / save PDF</span><span data-lang="th">พิมพ์ / บันทึก PDF</span></a>
+        <button type="button" class="text-button" id="clearInquiry"><span data-lang="en">Clear inquiry</span><span data-lang="th">ล้างรายการ</span></button>
+      </div>
+    </footer>
+  </div>`;
+  document.body.appendChild(dialog);
+
+  document.addEventListener("click", (event) => {
+    const add = event.target.closest("[data-add-inquiry]");
+    if (add) {
+      const code = add.dataset.addInquiry;
+      const items = getInquiry();
+      if (!items.some((item) => item.code === code)) {
+        saveInquiry([...items, { code, quantity: 1, size: "", colour: "", note: "" }]);
+      }
+      renderInquiryDrawer();
+      dialog.showModal();
+      dialog.querySelector("[data-close-inquiry]").focus();
+      return;
+    }
+    if (event.target.closest("[data-open-inquiry]")) {
+      renderInquiryDrawer();
+      dialog.showModal();
+      dialog.querySelector("[data-close-inquiry]").focus();
+    }
+    if (event.target.closest("[data-close-inquiry]")) dialog.close();
+    const remove = event.target.closest("[data-remove-inquiry]");
+    if (remove) {
+      saveInquiry(getInquiry().filter((item) => item.code !== remove.dataset.removeInquiry));
+      renderInquiryDrawer();
+    }
+  });
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog.addEventListener("input", (event) => {
+    const field = event.target.dataset.inquiryField;
+    const itemRoot = event.target.closest("[data-inquiry-code]");
+    if (!field || !itemRoot) return;
+    const items = getInquiry();
+    const item = items.find((entry) => entry.code === itemRoot.dataset.inquiryCode);
+    if (!item) return;
+    item[field] = field === "quantity" ? Math.max(1, Number(event.target.value) || 1) : event.target.value;
+    saveInquiry(items);
+  });
+  document.getElementById("clearInquiry").addEventListener("click", () => {
+    saveInquiry([]);
+    renderInquiryDrawer();
+  });
+  document.getElementById("copyInquiry").addEventListener("click", copyInquiryText);
+  document.getElementById("emailInquiry").addEventListener("click", () => {
+    const subject = encodeURIComponent("Product Inquiry — Milly's");
+    const body = encodeURIComponent(inquiryMessage(getInquiry()));
+    window.location.href = `${SITE_CONFIG.contact.email_href}?subject=${subject}&body=${body}`;
+  });
+  document.addEventListener("milly:language", () => {
+    if (dialog.open) renderInquiryDrawer();
+  });
+  updateInquiryUI();
+}
+
+function printMeasurementHTML(product) {
+  return (product.measurements || []).map((measurement) => `
+    <tr><th>${bilingualPair(measurement.label)}</th><td>${bilingualPair(measurement.value)}</td></tr>`).join("");
+}
+
+function initPrintCatalogue() {
+  const root = document.getElementById("printCatalogue");
+  if (!root) return;
+  const items = getInquiry();
+  root.innerHTML = items.length ? items.map((item) => {
+    const product = inquiryProduct(item.code);
+    if (!product) return "";
+    const category = PRODUCT_CATEGORIES[product.category];
+    const image = product.images?.[0];
+    return `<article class="print-product">
+      <div class="print-photo">${image ? imageHTML(image, product, { eager: true }) : placeholderPhoto()}</div>
+      <div class="print-copy">
+        <p class="print-category">${bilingualPair(category)} · ${escapeHTML(product.code)}</p>
+        <h2 data-lang="en">${escapeHTML(product.name.en)}</h2><h2 data-lang="th">${escapeHTML(product.name.th)}</h2>
+        <p><strong>${bilingualPair({ en: "Colours", th: "สี" })}:</strong> ${product.colours.map(bilingualPair).join(", ")}</p>
+        <table class="print-table"><tbody>${printMeasurementHTML(product)}</tbody></table>
+        <p><strong>${bilingualPair({ en: "Selected inquiry", th: "รายการที่เลือก" })}:</strong>
+          ${escapeHTML([`×${item.quantity || 1}`, item.size, item.colour, item.note].filter(Boolean).join(" · "))}</p>
+        <p class="print-url">${escapeHTML(`${SITE_CONFIG.site_url}/product.html?code=${product.code}`)}</p>
+      </div>
+    </article>`;
+  }).join("") : `<div class="print-empty"><p data-lang="en">No products are selected. Add products to your inquiry first.</p><p data-lang="th">ยังไม่ได้เลือกสินค้า กรุณาเพิ่มสินค้าในรายการสอบถามก่อน</p><a href="/shop.html">Catalogue / สินค้า</a></div>`;
+  document.getElementById("printCount").textContent = items.length;
+  document.getElementById("printButton").disabled = !items.length;
+  document.getElementById("printButton").addEventListener("click", () => window.print());
+  setLang(getLang());
 }
 
 async function loadPartial(id, url) {
@@ -671,7 +1120,6 @@ function initSEO() {
     url: SITE_CONFIG.site_url,
     email: SITE_CONFIG.contact.email,
     telephone: SITE_CONFIG.contact.phone,
-    address: SITE_CONFIG.contact.address,
     sameAs: [
       SITE_CONFIG.marketplaces.tiktok,
       SITE_CONFIG.marketplaces.shopee,
@@ -713,6 +1161,7 @@ async function initLayout() {
   initLangToggle();
   initMobileMenu();
   setActiveNavLink();
+  updateInquiryUI();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -724,6 +1173,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initShopPage();
   initProductPage();
   initContactForm();
+  initInquiry();
+  initPrintCatalogue();
 
   initLayout().then(() => {
     setLang(getLang());

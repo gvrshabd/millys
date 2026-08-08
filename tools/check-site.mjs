@@ -41,8 +41,7 @@ if (!SITE_CONFIG.prelaunch) {
 
 const requiredContact = {
   phone: "+66 97 041 0363",
-  email: "supportatmillys@gmail.com",
-  google_maps: "https://maps.app.goo.gl/yMDrdGXoSSGo9C1C9"
+  email: "supportatmillys@gmail.com"
 };
 for (const [field, expected] of Object.entries(requiredContact)) {
   if (SITE_CONFIG.contact[field] !== expected) {
@@ -124,6 +123,20 @@ for (const product of PRODUCTS) {
       fail(`${product.code} ${channel} link must start with https://.`);
     }
   }
+
+  if (product.variants !== undefined) {
+    if (!Array.isArray(product.variants)) {
+      fail(`${product.code} variants must be an array when provided.`);
+    } else {
+      product.variants.forEach((variant, index) => {
+        checkBilingual(variant.size, `${product.code} variant ${index + 1} size`);
+        checkBilingual(variant.colour, `${product.code} variant ${index + 1} colour`);
+        if (typeof variant.available !== "boolean") {
+          fail(`${product.code} variant ${index + 1} available must be true or false.`);
+        }
+      });
+    }
+  }
 }
 
 const htmlFiles = fs.readdirSync(root).filter((file) => file.endsWith(".html"));
@@ -133,7 +146,8 @@ const expectedPages = new Set([
   "product.html",
   "delivery-exchange.html",
   "about.html",
-  "contact.html"
+  "contact.html",
+  "catalogue-print.html"
 ]);
 
 for (const page of expectedPages) {
@@ -149,13 +163,16 @@ const bannedText = [
   "/size-guide.html",
   "Bilingual site",
   "TH / EN",
-  "including size help and order questions"
+  "including size help and order questions",
+  "56, 24 Ratchadaphisek 16 Alley",
+  "https://maps.app.goo.gl/yMDrdGXoSSGo9C1C9"
 ];
 
 for (const relativePath of [
   ...htmlFiles,
   "partials/header.html",
   "partials/footer.html",
+  "js/site-config.js",
   "js/main.js",
   "robots.txt",
   "sitemap.xml"
@@ -197,6 +214,12 @@ if (!mainScript.includes('encodeURIComponent("Support")')) {
 }
 if (!mainScript.includes("SITE_CONFIG.contact.email_href")) {
   fail("The contact form must use the configured support email.");
+}
+if (!mainScript.includes('encodeURIComponent("Product Inquiry — Milly\'s")')) {
+  fail("The inquiry email subject must remain Product Inquiry — Milly's.");
+}
+if (!mainScript.includes("INQUIRY_STORAGE_KEY")) {
+  fail("The inquiry basket must persist locally.");
 }
 
 const header = read("partials/header.html");
