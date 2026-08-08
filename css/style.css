@@ -162,6 +162,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--rose-deep);
   color: var(--white);
 }
+.inquiry-icon { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.7; }
 @media (max-width: 480px) { .inquiry-trigger-label { display: none !important; } }
 
 .lang-toggle {
