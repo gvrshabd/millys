@@ -230,6 +230,16 @@ function filterLabelHTML(key, label) {
     <span data-lang="th">${escapeHTML(label.th)}</span>`;
 }
 
+function productSearchText(product) {
+  const category = PRODUCT_CATEGORIES[product.category];
+  return [
+    product.code, product.name.en, product.name.th,
+    product.description.en, product.description.th,
+    category.en, category.th,
+    ...(product.colours || []).flatMap((colour) => [colour.en, colour.th])
+  ].join(" ").toLocaleLowerCase();
+}
+
 function initShopPage() {
   const grid = document.getElementById("productGrid");
   const filters = document.getElementById("categoryFilters");
@@ -260,16 +270,6 @@ function initShopPage() {
   stockFilter.value = ["available", "sold_out"].includes(params.get("stock")) ? params.get("stock") : "all";
   sort.value = ["name", "price_low", "price_high"].includes(params.get("sort")) ? params.get("sort") : "recommended";
 
-  function searchableText(product) {
-    const category = PRODUCT_CATEGORIES[product.category];
-    return [
-      product.code, product.name.en, product.name.th,
-      product.description.en, product.description.th,
-      category.en, category.th,
-      ...(product.colours || []).flatMap((colour) => [colour.en, colour.th])
-    ].join(" ").toLocaleLowerCase();
-  }
-
   function updateUrl() {
     const url = new URL(window.location);
     const values = {
@@ -291,7 +291,7 @@ function initShopPage() {
       list = list.filter((product) => product.category === activeCategory);
     }
     const query = search.value.trim().toLocaleLowerCase();
-    if (query) list = list.filter((product) => searchableText(product).includes(query));
+    if (query) list = list.filter((product) => productSearchText(product).includes(query));
     if (stockFilter.value === "available") list = list.filter((product) => product.stock !== "sold_out");
     if (stockFilter.value === "sold_out") list = list.filter((product) => product.stock === "sold_out");
     if (sort.value === "name") list.sort((a, b) => a.name[getLang()].localeCompare(b.name[getLang()]));
@@ -364,6 +364,60 @@ function homeShowcaseProducts() {
   )).filter(Boolean);
 }
 
+const COLLECTION_COPY = {
+  dresses: {
+    en: "Fluid shapes and vivid prints made for unhurried warm days.",
+    th: "เดรสทรงพลิ้วและลายสีสดใส สำหรับวันสบาย ๆ ในอากาศอบอุ่น"
+  },
+  kaftans: {
+    en: "Airy layers with an easy drape for travel and everyday comfort.",
+    th: "เสื้อคลุมเนื้อบางเบา ทิ้งตัวสวย เหมาะกับการเดินทางและวันสบาย ๆ"
+  },
+  tops: {
+    en: "Relaxed silhouettes and expressive prints for simple styling.",
+    th: "เสื้อทรงสบายพร้อมลายโดดเด่น จับคู่ได้ง่ายในทุกวัน"
+  },
+  sets: {
+    en: "Coordinated pieces that make getting dressed feel effortless.",
+    th: "ชุดเข้าคู่ที่ช่วยให้การแต่งตัวสวยครบลุคเป็นเรื่องง่าย"
+  },
+  bags: {
+    en: "Practical textile bags with colour, texture and character.",
+    th: "กระเป๋าผ้าใช้งานสะดวก เติมสีสัน พื้นผิว และเอกลักษณ์ให้ทุกลุค"
+  },
+  pants: {
+    en: "Easy silhouettes designed for movement and all-day comfort.",
+    th: "กางเกงทรงสบาย ออกแบบให้เคลื่อนไหวคล่องตัวได้ตลอดวัน"
+  },
+  skirts: {
+    en: "Flowing lengths and patchwork colour that move with you.",
+    th: "กระโปรงทรงพลิ้วและสีสันงานผ้าต่อที่เคลื่อนไหวไปพร้อมกับคุณ"
+  }
+};
+
+function collectionMediaHTML(product, image, eager, reduceMotion) {
+  const src = assetUrl(image.src);
+  const altEn = image.alt?.en || product.name.en;
+  const altTh = image.alt?.th || product.name.th;
+  const heroVideo = product.home_showcase?.hero_video;
+  const foreground = heroVideo && !reduceMotion
+    ? `<video class="collection-feature" autoplay muted loop playsinline preload="metadata"
+        poster="${escapeHTML(src)}" aria-hidden="true">
+        <source src="${escapeHTML(assetUrl(heroVideo))}">
+      </video>`
+    : `<img class="collection-feature"
+        src="${escapeHTML(src)}"
+        alt="${escapeHTML(getLang() === "th" ? altTh : altEn)}"
+        data-alt-en="${escapeHTML(altEn)}"
+        data-alt-th="${escapeHTML(altTh)}"
+        loading="${eager ? "eager" : "lazy"}"
+        decoding="async"${eager ? ' fetchpriority="high"' : ""}>`;
+  return `<div class="collection-media">
+    <img class="collection-backdrop" src="${escapeHTML(src)}" alt="" aria-hidden="true">
+    ${foreground}
+  </div>`;
+}
+
 function initHomeShowcase() {
   const root = document.getElementById("homeShowcase");
   if (!root) return;
@@ -376,44 +430,54 @@ function initHomeShowcase() {
   if (!stage || !previousButton || !nextButton || !dots || !products.length) return;
 
   let activeIndex = 0;
-  let rotationTimer;
+  let pointerStartX = null;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  dots.innerHTML = products.map(() => '<span class="hero-showcase-dot"></span>').join("");
+  dots.innerHTML = products.map((product, index) => {
+    const category = PRODUCT_CATEGORIES[product.category];
+    return `<button type="button" class="hero-showcase-dot" data-home-index="${index}"
+      data-aria-en="View ${escapeHTML(category.en)} collection"
+      data-aria-th="ดูคอลเลกชัน${escapeHTML(category.th)}">
+      <span class="sr-only">${escapeHTML(category.en)}</span>
+    </button>`;
+  }).join("");
 
   function render(index) {
     activeIndex = (index + products.length) % products.length;
     const product = products[activeIndex];
-    const displayName = product.home_showcase?.name || product.name;
     const requestedImage = Number(product.home_showcase?.image_index) || 0;
     const image = product.images[requestedImage] || product.images[0];
     const category = PRODUCT_CATEGORIES[product.category];
-    const showcaseImage = {
-      ...image,
-      alt: {
-        en: `${displayName.en} — ${category.en}`,
-        th: `${displayName.th} — ${category.th}`
-      }
-    };
+    const description = COLLECTION_COPY[product.category];
 
     stage.innerHTML = `
       <a class="hero-showcase-link"
-        href="/product.html?code=${encodeURIComponent(product.code)}"
-        data-aria-en="View ${escapeHTML(displayName.en)}"
-        data-aria-th="ดู ${escapeHTML(displayName.th)}">
+        href="/shop.html?category=${encodeURIComponent(product.category)}"
+        data-aria-en="Browse the ${escapeHTML(category.en)} collection"
+        data-aria-th="ดูคอลเลกชัน${escapeHTML(category.th)}">
         <div class="hero-showcase-media">
-          ${imageHTML(showcaseImage, product, { eager: activeIndex === 0 })}
+          ${collectionMediaHTML(product, image, activeIndex === 0, reduceMotion.matches)}
           <div class="hero-showcase-caption">
-            <span class="hero-showcase-category" data-lang="en">${escapeHTML(category.en)}</span>
-            <span class="hero-showcase-category" data-lang="th">${escapeHTML(category.th)}</span>
-            <p class="hero-showcase-name" data-lang="en">${escapeHTML(displayName.en)}</p>
-            <p class="hero-showcase-name" data-lang="th">${escapeHTML(displayName.th)}</p>
+            <span class="hero-showcase-category" data-lang="en">Milly's collection</span>
+            <span class="hero-showcase-category" data-lang="th">คอลเลกชัน Milly's</span>
+            <h1 class="hero-showcase-name" data-lang="en">${escapeHTML(category.en)}</h1>
+            <h1 class="hero-showcase-name" data-lang="th">${escapeHTML(category.th)}</h1>
+            <p class="hero-showcase-description" data-lang="en">${escapeHTML(description.en)}</p>
+            <p class="hero-showcase-description" data-lang="th">${escapeHTML(description.th)}</p>
+            <span class="hero-collection-link">
+              <span data-lang="en">Explore collection</span>
+              <span data-lang="th">ดูคอลเลกชัน</span>
+              <span aria-hidden="true">→</span>
+            </span>
           </div>
+          <span class="hero-counter" aria-hidden="true">${String(activeIndex + 1).padStart(2, "0")} / ${String(products.length).padStart(2, "0")}</span>
         </div>
       </a>`;
 
     dots.querySelectorAll(".hero-showcase-dot").forEach((dot, dotIndex) => {
       dot.classList.toggle("active", dotIndex === activeIndex);
+      if (dotIndex === activeIndex) dot.setAttribute("aria-current", "true");
+      else dot.removeAttribute("aria-current");
     });
 
     const nextProduct = products[(activeIndex + 1) % products.length];
@@ -427,50 +491,33 @@ function initHomeShowcase() {
     setLang(getLang());
   }
 
-  function stopRotation() {
-    window.clearInterval(rotationTimer);
-  }
-
-  function startRotation() {
-    stopRotation();
-    if (reduceMotion.matches || document.hidden) return;
-    rotationTimer = window.setInterval(() => render(activeIndex + 1), 6500);
-  }
-
   function move(direction) {
     render(activeIndex + direction);
-    startRotation();
   }
 
   previousButton.addEventListener("click", () => move(-1));
   nextButton.addEventListener("click", () => move(1));
-  root.addEventListener("mouseenter", stopRotation);
-  root.addEventListener("mouseleave", startRotation);
-  root.addEventListener("focusin", stopRotation);
-  root.addEventListener("focusout", (event) => {
-    if (!root.contains(event.relatedTarget)) startRotation();
+  dots.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-home-index]");
+    if (button) render(Number(button.dataset.homeIndex));
   });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopRotation();
-    else startRotation();
+  root.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse") return;
+    pointerStartX = event.clientX;
   });
+  root.addEventListener("pointerup", (event) => {
+    if (pointerStartX === null) return;
+    const distance = event.clientX - pointerStartX;
+    pointerStartX = null;
+    if (Math.abs(distance) > 48) move(distance > 0 ? -1 : 1);
+  });
+  root.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") move(-1);
+    if (event.key === "ArrowRight") move(1);
+  });
+  reduceMotion.addEventListener?.("change", () => render(activeIndex));
 
   render(0);
-  startRotation();
-}
-
-function initHomeFeatured() {
-  const grid = document.getElementById("featuredGrid");
-  if (!grid) return;
-  const featured = homeShowcaseProducts().slice(0, 4);
-  renderGrid(grid, featured.length ? featured : PRODUCTS.slice(0, 4));
-}
-
-function initHomeStats() {
-  const collectionCount = new Set(PRODUCTS.map((product) => product.category)).size;
-  document.querySelectorAll("[data-stat-collections]").forEach((element) => {
-    element.textContent = collectionCount;
-  });
 }
 
 function bilingualPair(value) {
@@ -717,6 +764,124 @@ function initProductPage() {
 
   setLang(getLang());
   initProductGallery(product);
+}
+
+function globalSearchResultHTML(product) {
+  const category = PRODUCT_CATEGORIES[product.category];
+  const image = product.images?.[0];
+  return `<a class="global-search-result" href="/product.html?code=${encodeURIComponent(product.code)}">
+    <span class="global-search-thumb">
+      ${image ? imageHTML(image, product) : placeholderPhoto()}
+    </span>
+    <span class="global-search-result-copy">
+      <span class="global-search-category">${bilingualPair(category)} · ${escapeHTML(product.code)}</span>
+      <strong data-lang="en">${escapeHTML(product.name.en)}</strong>
+      <strong data-lang="th">${escapeHTML(product.name.th)}</strong>
+    </span>
+    <span class="global-search-arrow" aria-hidden="true">→</span>
+  </a>`;
+}
+
+function initGlobalSearch() {
+  if (document.body.classList.contains("print-page")) return;
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.id = "globalSearchTrigger";
+  trigger.className = "global-search-trigger";
+  trigger.dataset.ariaEn = "Search the catalogue";
+  trigger.dataset.ariaTh = "ค้นหาในแคตตาล็อก";
+  trigger.innerHTML = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="10.75" cy="10.75" r="6.75"></circle><path d="m16 16 4 4"></path>
+  </svg><span class="sr-only" data-lang="en">Search</span><span class="sr-only" data-lang="th">ค้นหา</span>`;
+  document.body.appendChild(trigger);
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "globalSearchDialog";
+  dialog.className = "global-search-dialog";
+  dialog.innerHTML = `<div class="global-search-panel">
+    <header class="global-search-header">
+      <div>
+        <p class="eyebrow" data-lang="en">All ${PRODUCTS.length} products</p>
+        <p class="eyebrow" data-lang="th">สินค้าทั้งหมด ${PRODUCTS.length} รายการ</p>
+        <h2 data-lang="en">Search the catalogue</h2>
+        <h2 data-lang="th">ค้นหาในแคตตาล็อก</h2>
+      </div>
+      <button type="button" class="global-search-close" data-close-search
+        data-aria-en="Close search" data-aria-th="ปิดการค้นหา">×</button>
+    </header>
+    <div class="global-search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.75" cy="10.75" r="6.75"></circle><path d="m16 16 4 4"></path></svg>
+      <label class="sr-only" for="globalSearchInput"><span data-lang="en">Search products</span><span data-lang="th">ค้นหาสินค้า</span></label>
+      <input id="globalSearchInput" type="search" autocomplete="off"
+        data-placeholder-en="Search name, code, category or colour…"
+        data-placeholder-th="ค้นหาชื่อ รหัส หมวดหมู่ หรือสี…">
+    </div>
+    <p class="global-search-status" id="globalSearchStatus" aria-live="polite"></p>
+    <div class="global-search-results" id="globalSearchResults"></div>
+  </div>`;
+  document.body.appendChild(dialog);
+
+  const input = dialog.querySelector("#globalSearchInput");
+  const status = dialog.querySelector("#globalSearchStatus");
+  const results = dialog.querySelector("#globalSearchResults");
+
+  function render() {
+    const query = input.value.trim().toLocaleLowerCase();
+    if (!query) {
+      status.textContent = getLang() === "th" ? "เลือกหมวดหมู่หรือพิมพ์เพื่อค้นหา" : "Choose a collection or start typing";
+      results.innerHTML = `<div class="global-search-categories">
+        ${Object.entries(PRODUCT_CATEGORIES).map(([key, category]) => `
+          <a href="/shop.html?category=${encodeURIComponent(key)}">
+            ${bilingualPair(category)}<span aria-hidden="true">→</span>
+          </a>`).join("")}
+      </div>`;
+      setLang(getLang());
+      return;
+    }
+
+    const matches = PRODUCTS.filter((product) => productSearchText(product).includes(query));
+    status.textContent = getLang() === "th"
+      ? `พบ ${matches.length} รายการ`
+      : `${matches.length} result${matches.length === 1 ? "" : "s"}`;
+    results.innerHTML = matches.length
+      ? `${matches.map(globalSearchResultHTML).join("")}
+        <a class="global-search-all" href="/shop.html?q=${encodeURIComponent(input.value.trim())}">
+          <span data-lang="en">View results in the full catalogue</span>
+          <span data-lang="th">ดูผลลัพธ์ในแคตตาล็อกทั้งหมด</span>
+          <span aria-hidden="true">→</span>
+        </a>`
+      : `<div class="global-search-empty">
+          <p data-lang="en">No products match “${escapeHTML(input.value.trim())}”. Try another name, category, code or colour.</p>
+          <p data-lang="th">ไม่พบสินค้าที่ตรงกับ “${escapeHTML(input.value.trim())}” ลองค้นหาด้วยชื่อ หมวดหมู่ รหัส หรือสีอื่น</p>
+        </div>`;
+    setLang(getLang());
+  }
+
+  trigger.addEventListener("click", () => {
+    render();
+    dialog.showModal();
+    requestAnimationFrame(() => input.focus());
+  });
+  dialog.querySelector("[data-close-search]").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      dialog.close();
+    }
+  });
+  dialog.addEventListener("click", (event) => {
+    if (event.target.closest("a")) dialog.close();
+  });
+  dialog.addEventListener("close", () => trigger.focus());
+  input.addEventListener("input", render);
+  document.addEventListener("milly:language", () => {
+    if (dialog.open) render();
+  });
+  setLang(getLang());
 }
 
 let inquiryMemory = [];
@@ -1054,6 +1219,14 @@ function initMobileMenu() {
   });
 }
 
+function initHeaderAppearance() {
+  const header = document.querySelector(".site-header");
+  if (!header) return;
+  const update = () => header.classList.toggle("scrolled", window.scrollY > 24);
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+}
+
 function initContactForm() {
   const form = document.getElementById("contactForm");
   if (!form) return;
@@ -1160,6 +1333,7 @@ async function initLayout() {
   applySiteConfig();
   initLangToggle();
   initMobileMenu();
+  initHeaderAppearance();
   setActiveNavLink();
   updateInquiryUI();
 }
@@ -1168,11 +1342,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initSEO();
   initAnalytics();
   initHomeShowcase();
-  initHomeFeatured();
-  initHomeStats();
   initShopPage();
   initProductPage();
   initContactForm();
+  initGlobalSearch();
   initInquiry();
   initPrintCatalogue();
 

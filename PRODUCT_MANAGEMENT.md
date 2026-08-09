@@ -85,6 +85,38 @@ images: [
 The first image is the main catalogue photograph. Additional images become
 gallery thumbnails.
 
+## Choose a homepage collection image or video
+
+Each homepage collection is represented by one product with a `home_showcase`
+field. `image_index` is zero-based: `0` selects the first product image, `1`
+selects the second, and so on.
+
+```js
+home_showcase: {
+  image_index: 1,
+  name: {
+    en: "Short English collection feature name",
+    th: "Short Thai collection feature name"
+  }
+}
+```
+
+Use `home_showcase` on only one product in each category. To replace its still
+image with a future homepage video, upload a web-sized MP4 file and add an
+optional `hero_video` path. The selected product image remains the poster and
+reduced-motion fallback.
+
+```js
+home_showcase: {
+  image_index: 1,
+  hero_video: "products/mly-sk-001-hero.mp4",
+  name: {
+    en: "Pleated Patchwork Skirt",
+    th: "กระโปรงยาวผ้าต่อทรงพลีท"
+  }
+}
+```
+
 ## Add a product video
 
 Upload a short MP4 file to `images/products`, then add:

@@ -11507,7 +11507,7 @@ const PRODUCTS = [
     },
     "category": "skirts",
     "home_showcase": {
-      "image_index": 0,
+      "image_index": 1,
       "name": {
         "en": "Pleated Patchwork Skirt",
         "th": "กระโปรงยาวผ้าต่อทรงพลีท"
@@ -13071,7 +13071,7 @@ const PRODUCTS = [
     },
     "category": "pants",
     "home_showcase": {
-      "image_index": 0,
+      "image_index": 1,
       "name": {
         "en": "Patchwork Cotton Pants",
         "th": "กางเกงผ้าคอตตอนตัดต่อ"

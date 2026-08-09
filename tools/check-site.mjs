@@ -144,7 +144,6 @@ const expectedPages = new Set([
   "index.html",
   "shop.html",
   "product.html",
-  "delivery-exchange.html",
   "about.html",
   "contact.html",
   "catalogue-print.html"
@@ -156,6 +155,9 @@ for (const page of expectedPages) {
 if (fs.existsSync(path.join(root, "size-guide.html"))) {
   fail("size-guide.html should not exist.");
 }
+if (fs.existsSync(path.join(root, "delivery-exchange.html"))) {
+  fail("delivery-exchange.html should not exist.");
+}
 
 const bannedText = [
   "hello@millys.example",
@@ -163,6 +165,8 @@ const bannedText = [
   "/size-guide.html",
   "Bilingual site",
   "TH / EN",
+  "/delivery-exchange.html",
+  "Delivery &amp; Exchange",
   "including size help and order questions",
   "56, 24 Ratchadaphisek 16 Alley",
   "https://maps.app.goo.gl/yMDrdGXoSSGo9C1C9"
@@ -241,7 +245,7 @@ const placeholderCount = htmlFiles.reduce((count, page) => {
   return count + (read(page).match(/\[Owner to (provide|confirm)/g) || []).length;
 }, 0);
 if (placeholderCount) {
-  notes.push(`${placeholderCount} approved owner placeholders remain on About and Delivery & Exchange.`);
+  notes.push(`${placeholderCount} approved owner placeholders remain on About.`);
 }
 
 if (failures.length) {

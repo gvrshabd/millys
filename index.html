@@ -4,162 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Milly's — Bohemian Fashion &amp; Accessories, Made in Thailand</title>
-<meta name="description" content="Browse Milly's Thai bohemian fashion catalogue, including dresses, tops, kaftans, sets, bags, pants and skirts. Order via LINE, TikTok Shop, Shopee or Lazada.">
+<meta name="description" content="Explore Milly's Thai bohemian collections, including dresses, tops, kaftans, sets, bags, pants and skirts.">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#FBF4EE">
+<meta name="theme-color" content="#3D332C">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Milly's — Thai-made garments">
-<meta property="og:description" content="Browse Milly's catalogue and order through your preferred marketplace.">
+<meta property="og:title" content="Milly's — Thai-made collections">
+<meta property="og:description" content="Explore seven expressive Milly's collections and browse the full catalogue.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="home-page">
 
 <div id="site-header"></div>
 
 <main>
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow" data-lang="en">MLY / Thai-made catalogue</span>
-        <span class="eyebrow" data-lang="th">MLY / แคตตาล็อกเสื้อผ้าไทย</span>
-        <h1 data-lang="en">Bohemian pieces<br>for real, warm days.</h1>
-        <h1 data-lang="th">แฟชั่นโบฮีเมียน<br>เพื่อวันสบายๆ ของคุณ</h1>
-        <p class="lede" data-lang="en">Milly's designs easygoing pieces in soft, breathable fabric — sized clearly, photographed honestly, and ready to order in a few taps.</p>
-        <p class="lede" data-lang="th">มิลลี่ออกแบบเสื้อผ้าใส่สบายจากผ้าเนื้อดี ระบุไซซ์ชัดเจน พร้อมสั่งซื้อได้ง่ายๆ ในไม่กี่ขั้นตอน</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;">
-          <a href="/shop.html" class="btn">
-            <span data-lang="en">Shop the Catalogue</span><span data-lang="th">ดูสินค้าทั้งหมด</span>
-          </a>
-        </div>
-        <div class="hero-stats">
-          <div><strong data-stat-collections>7</strong><span data-lang="en">Categories live</span><span data-lang="th">หมวดหมู่สินค้า</span></div>
-          <div><strong>4</strong><span data-lang="en">Ways to order</span><span data-lang="th">ช่องทางสั่งซื้อ</span></div>
-        </div>
-      </div>
-      <div class="hero-visual" id="homeShowcase"
-        role="region"
-        data-aria-en="Featured products"
-        data-aria-th="สินค้าแนะนำ"
-        aria-roledescription="carousel">
-        <div class="hero-showcase-stage"></div>
-        <button class="hero-showcase-arrow hero-showcase-prev" type="button"
-          data-aria-en="Previous featured product"
-          data-aria-th="ดูสินค้าแนะนำก่อนหน้า">
-          <span aria-hidden="true">←</span>
-        </button>
-        <button class="hero-showcase-arrow hero-showcase-next" type="button"
-          data-aria-en="Next featured product"
-          data-aria-th="ดูสินค้าแนะนำถัดไป">
-          <span aria-hidden="true">→</span>
-        </button>
-        <div class="hero-showcase-dots" aria-hidden="true"></div>
-      </div>
-    </div>
-  </section>
+  <section class="collection-hero" id="homeShowcase"
+    role="region"
+    data-aria-en="Milly's category collections"
+    data-aria-th="คอลเลกชันหมวดหมู่ของ Milly's"
+    aria-roledescription="carousel">
+    <div class="hero-showcase-stage" aria-live="off"></div>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow" data-lang="en">Selected styles</span>
-          <span class="eyebrow" data-lang="th">สไตล์ที่คัดสรร</span>
-          <h2 data-lang="en">Featured pieces</h2>
-          <h2 data-lang="th">สินค้าแนะนำ</h2>
-        </div>
-        <a href="/shop.html" class="btn btn-outline">
-          <span data-lang="en">View All</span><span data-lang="th">ดูทั้งหมด</span>
-        </a>
-      </div>
-      <div class="product-grid" id="featuredGrid"></div>
-    </div>
-  </section>
+    <button class="hero-showcase-arrow hero-showcase-prev" type="button"
+      data-aria-en="Previous collection"
+      data-aria-th="คอลเลกชันก่อนหน้า">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+    </button>
+    <button class="hero-showcase-arrow hero-showcase-next" type="button"
+      data-aria-en="Next collection"
+      data-aria-th="คอลเลกชันถัดไป">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+    </button>
 
-  <section class="section section-alt">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow" data-lang="en">Shop by category</span>
-          <span class="eyebrow" data-lang="th">เลือกซื้อตามหมวดหมู่</span>
-          <h2 data-lang="en">Seven categories, one easy feeling</h2>
-          <h2 data-lang="th">เจ็ดหมวดหมู่ ใส่สบายในสไตล์เดียวกัน</h2>
-        </div>
-      </div>
-      <div class="two-col">
-        <a href="/shop.html?category=dresses" class="info-card" style="display:block;">
-          <h3 data-lang="en">Dresses</h3>
-          <h3 data-lang="th">เดรส</h3>
-          <p data-lang="en">Wraps, midis and everyday sundresses cut for movement.</p>
-          <p data-lang="th">เดรสห่อคลุม มิดิ และเดรสใส่ประจำวัน ตัดเย็บให้เคลื่อนไหวสะดวก</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Dresses</span><span data-lang="th">ดูเดรสทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=kaftans" class="info-card" style="display:block;">
-          <h3 data-lang="en">Kaftans</h3>
-          <h3 data-lang="th">คาฟตัน</h3>
-          <p data-lang="en">Loose, breathable silhouettes for beach days and warm evenings.</p>
-          <p data-lang="th">ทรงหลวมใส่สบาย เหมาะกับวันทะเลและอากาศร้อน</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Kaftans</span><span data-lang="th">ดูคาฟตันทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=tops" class="info-card" style="display:block;">
-          <h3 data-lang="en">Tops</h3>
-          <h3 data-lang="th">เสื้อ</h3>
-          <p data-lang="en">Relaxed batwing, embroidered and floral tops for easy everyday styling.</p>
-          <p data-lang="th">เสื้อทรงปีกค้างคาว งานปัก และลายดอก ใส่สบายได้ทุกวัน</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Tops</span><span data-lang="th">ดูเสื้อทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=bags" class="info-card" style="display:block;">
-          <h3 data-lang="en">Bags</h3>
-          <h3 data-lang="th">กระเป๋า</h3>
-          <p data-lang="en">Cotton, embroidered and woven bags in practical bohemian shapes.</p>
-          <p data-lang="th">กระเป๋าผ้าคอตตอน งานปัก และงานทอ ในรูปทรงโบฮีเมียนที่ใช้งานง่าย</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Bags</span><span data-lang="th">ดูกระเป๋าทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=sets" class="info-card" style="display:block;">
-          <h3 data-lang="en">Sets</h3>
-          <h3 data-lang="th">ชุดเซ็ต</h3>
-          <p data-lang="en">Coordinated tops, pants and skirts for a complete look.</p>
-          <p data-lang="th">ชุดเสื้อเข้าคู่กับกางเกงหรือกระโปรง พร้อมใส่เป็นลุคครบชุด</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Sets</span><span data-lang="th">ดูชุดเซ็ตทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=pants" class="info-card" style="display:block;">
-          <h3 data-lang="en">Pants</h3>
-          <h3 data-lang="th">กางเกง</h3>
-          <p data-lang="en">Comfortable patchwork and cotton pants with relaxed silhouettes.</p>
-          <p data-lang="th">กางเกงผ้าต่อและผ้าคอตตอน ทรงสบาย เคลื่อนไหวสะดวก</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Pants</span><span data-lang="th">ดูกางเกงทั้งหมด</span></span>
-        </a>
-        <a href="/shop.html?category=skirts" class="info-card" style="display:block;">
-          <h3 data-lang="en">Skirts</h3>
-          <h3 data-lang="th">กระโปรง</h3>
-          <p data-lang="en">Flowing patchwork, rayon and embellished skirts.</p>
-          <p data-lang="th">กระโปรงผ้าต่อ ผ้าเรยอน และงานตกแต่ง พลิ้วสวยใส่สบาย</p>
-          <span class="btn btn-outline"><span data-lang="en">Browse Skirts</span><span data-lang="th">ดูกระโปรงทั้งหมด</span></span>
-        </a>
-      </div>
-    </div>
-  </section>
+    <div class="hero-showcase-dots"
+      data-aria-en="Choose a collection"
+      data-aria-th="เลือกคอลเลกชัน"></div>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow" data-lang="en">How ordering works</span>
-          <span class="eyebrow" data-lang="th">วิธีสั่งซื้อ</span>
-          <h2 data-lang="en">Browse here, order there</h2>
-          <h2 data-lang="th">ดูสินค้าที่นี่ สั่งซื้อผ่านช่องทางที่คุณสะดวก</h2>
-        </div>
-      </div>
-      <p data-lang="en" style="max-width:60ch;">This is a catalogue site — every product page links straight to our LINE, TikTok Shop, Shopee and Lazada storefronts so you can check out the way you already trust.</p>
-      <p data-lang="th" style="max-width:60ch;">เว็บไซต์นี้เป็นแคตตาล็อกสินค้า ทุกหน้าสินค้าลิงก์ไปยัง LINE, TikTok Shop, Shopee และ Lazada เพื่อให้คุณสั่งซื้อได้อย่างมั่นใจ</p>
-      <div class="order-buttons" style="max-width:520px;">
-        <a class="order-btn" data-config-href="marketplaces.line" data-order-channel="line" target="_blank" rel="noopener noreferrer"><span class="dot"></span>LINE</a>
-        <a class="order-btn" data-config-href="marketplaces.tiktok" data-order-channel="tiktok" target="_blank" rel="noopener noreferrer"><span class="dot"></span>TikTok Shop</a>
-        <a class="order-btn" data-config-href="marketplaces.shopee" data-order-channel="shopee" target="_blank" rel="noopener noreferrer"><span class="dot"></span>Shopee</a>
-        <a class="order-btn" data-config-href="marketplaces.lazada" data-order-channel="lazada" target="_blank" rel="noopener noreferrer"><span class="dot"></span>Lazada</a>
-      </div>
-    </div>
+    <p class="hero-swipe-hint">
+      <span data-lang="en">Swipe to explore</span>
+      <span data-lang="th">ปัดเพื่อดูคอลเลกชัน</span>
+    </p>
   </section>
 </main>
 
