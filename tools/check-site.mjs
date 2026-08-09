@@ -226,6 +226,18 @@ if (!mainScript.includes("INQUIRY_STORAGE_KEY")) {
   fail("The inquiry basket must persist locally.");
 }
 
+const homepage = read("index.html");
+const styles = read("css/style.css");
+if (homepage.includes("hero-showcase-arrow")) {
+  fail("The homepage must not restore horizontal collection arrows.");
+}
+if (!mainScript.includes('class="collection-panel"') || !mainScript.includes("IntersectionObserver")) {
+  fail("The homepage must render vertically stacked panels with visibility-based rail tracking.");
+}
+if (!styles.includes("scroll-snap-type: y proximity") || !styles.includes("scroll-snap-align: start")) {
+  fail("The homepage is missing its natural vertical scroll-snap layout.");
+}
+
 const header = read("partials/header.html");
 if (!header.includes('data-set-lang="en"') || !header.includes('data-set-lang="th"')) {
   fail("The header is missing one or both language controls.");

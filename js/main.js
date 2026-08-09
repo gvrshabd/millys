@@ -413,7 +413,8 @@ function collectionMediaHTML(product, image, eager, reduceMotion) {
         loading="${eager ? "eager" : "lazy"}"
         decoding="async"${eager ? ' fetchpriority="high"' : ""}>`;
   return `<div class="collection-media">
-    <img class="collection-backdrop" src="${escapeHTML(src)}" alt="" aria-hidden="true">
+    <img class="collection-backdrop" src="${escapeHTML(src)}" alt="" aria-hidden="true"
+      loading="${eager ? "eager" : "lazy"}" decoding="async">
     ${foreground}
   </div>`;
 }
@@ -423,45 +424,34 @@ function initHomeShowcase() {
   if (!root) return;
 
   const stage = root.querySelector(".hero-showcase-stage");
-  const previousButton = root.querySelector(".hero-showcase-prev");
-  const nextButton = root.querySelector(".hero-showcase-next");
   const dots = root.querySelector(".hero-showcase-dots");
   const products = homeShowcaseProducts();
-  if (!stage || !previousButton || !nextButton || !dots || !products.length) return;
+  if (!stage || !dots || !products.length) return;
 
-  let activeIndex = 0;
-  let pointerStartX = null;
+  document.documentElement.classList.add("home-scroll-page");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  dots.innerHTML = products.map((product, index) => {
-    const category = PRODUCT_CATEGORIES[product.category];
-    return `<button type="button" class="hero-showcase-dot" data-home-index="${index}"
-      data-aria-en="View ${escapeHTML(category.en)} collection"
-      data-aria-th="ดูคอลเลกชัน${escapeHTML(category.th)}">
-      <span class="sr-only">${escapeHTML(category.en)}</span>
-    </button>`;
-  }).join("");
-
-  function render(index) {
-    activeIndex = (index + products.length) % products.length;
-    const product = products[activeIndex];
+  stage.innerHTML = products.map((product, index) => {
     const requestedImage = Number(product.home_showcase?.image_index) || 0;
     const image = product.images[requestedImage] || product.images[0];
     const category = PRODUCT_CATEGORIES[product.category];
     const description = COLLECTION_COPY[product.category];
-
-    stage.innerHTML = `
+    const heading = index === 0 ? "h1" : "h2";
+    return `
+      <section class="collection-panel" id="collection-${escapeHTML(product.category)}"
+        data-collection-index="${index}" data-collection-category="${escapeHTML(product.category)}"
+        aria-labelledby="collection-title-${escapeHTML(product.category)}">
       <a class="hero-showcase-link"
         href="/shop.html?category=${encodeURIComponent(product.category)}"
         data-aria-en="Browse the ${escapeHTML(category.en)} collection"
         data-aria-th="ดูคอลเลกชัน${escapeHTML(category.th)}">
         <div class="hero-showcase-media">
-          ${collectionMediaHTML(product, image, activeIndex === 0, reduceMotion.matches)}
+          ${collectionMediaHTML(product, image, index === 0, reduceMotion.matches)}
           <div class="hero-showcase-caption">
             <span class="hero-showcase-category" data-lang="en">Milly's collection</span>
             <span class="hero-showcase-category" data-lang="th">คอลเลกชัน Milly's</span>
-            <h1 class="hero-showcase-name" data-lang="en">${escapeHTML(category.en)}</h1>
-            <h1 class="hero-showcase-name" data-lang="th">${escapeHTML(category.th)}</h1>
+            <${heading} class="hero-showcase-name" id="collection-title-${escapeHTML(product.category)}" data-lang="en">${escapeHTML(category.en)}</${heading}>
+            <${heading} class="hero-showcase-name" data-lang="th">${escapeHTML(category.th)}</${heading}>
             <p class="hero-showcase-description" data-lang="en">${escapeHTML(description.en)}</p>
             <p class="hero-showcase-description" data-lang="th">${escapeHTML(description.th)}</p>
             <span class="hero-collection-link">
@@ -470,54 +460,72 @@ function initHomeShowcase() {
               <span aria-hidden="true">→</span>
             </span>
           </div>
-          <span class="hero-counter" aria-hidden="true">${String(activeIndex + 1).padStart(2, "0")} / ${String(products.length).padStart(2, "0")}</span>
+          <span class="hero-counter" aria-hidden="true">${String(index + 1).padStart(2, "0")} / ${String(products.length).padStart(2, "0")}</span>
         </div>
-      </a>`;
+      </a>
+      ${index === 0 ? `<p class="hero-scroll-hint">
+        <span data-lang="en">Scroll to explore</span>
+        <span data-lang="th">เลื่อนเพื่อดูคอลเลกชัน</span>
+        <span class="hero-scroll-line" aria-hidden="true"></span>
+      </p>` : ""}
+      </section>`;
+  }).join("");
 
-    dots.querySelectorAll(".hero-showcase-dot").forEach((dot, dotIndex) => {
-      dot.classList.toggle("active", dotIndex === activeIndex);
-      if (dotIndex === activeIndex) dot.setAttribute("aria-current", "true");
-      else dot.removeAttribute("aria-current");
+  dots.innerHTML = products.map((product, index) => {
+    const category = PRODUCT_CATEGORIES[product.category];
+    return `<button type="button" class="hero-showcase-dot" data-home-index="${index}"
+      data-aria-en="Go to ${escapeHTML(category.en)} collection"
+      data-aria-th="ไปยังคอลเลกชัน${escapeHTML(category.th)}">
+      <span class="sr-only" data-lang="en">Go to ${escapeHTML(category.en)} collection</span>
+      <span class="sr-only" data-lang="th">ไปยังคอลเลกชัน${escapeHTML(category.th)}</span>
+    </button>`;
+  }).join("");
+
+  const panels = [...stage.querySelectorAll(".collection-panel")];
+  const dotButtons = [...dots.querySelectorAll(".hero-showcase-dot")];
+  const visibility = new Map(panels.map((panel) => [panel, 0]));
+  let activeIndex = -1;
+
+  function setActive(index) {
+    if (index === activeIndex || index < 0 || index >= panels.length) return;
+    activeIndex = index;
+    dotButtons.forEach((button, buttonIndex) => {
+      const active = buttonIndex === activeIndex;
+      button.classList.toggle("active", active);
+      if (active) button.setAttribute("aria-current", "true");
+      else button.removeAttribute("aria-current");
     });
-
-    const nextProduct = products[(activeIndex + 1) % products.length];
-    const nextImageIndex = Number(nextProduct.home_showcase?.image_index) || 0;
-    const nextImage = nextProduct.images[nextImageIndex] || nextProduct.images[0];
-    if (nextImage?.src) {
-      const preload = new Image();
-      preload.src = assetUrl(nextImage.src);
-    }
-
-    setLang(getLang());
+    const header = document.querySelector(".site-header");
+    if (header) header.dataset.collection = products[activeIndex].category;
   }
 
-  function move(direction) {
-    render(activeIndex + direction);
-  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => visibility.set(entry.target, entry.intersectionRatio));
+    let mostVisibleIndex = activeIndex;
+    let mostVisibleRatio = -1;
+    panels.forEach((panel, index) => {
+      const ratio = visibility.get(panel) || 0;
+      if (ratio > mostVisibleRatio) {
+        mostVisibleIndex = index;
+        mostVisibleRatio = ratio;
+      }
+    });
+    setActive(mostVisibleIndex);
+  }, { threshold: [0, 0.25, 0.5, 0.65, 0.85, 1] });
 
-  previousButton.addEventListener("click", () => move(-1));
-  nextButton.addEventListener("click", () => move(1));
+  panels.forEach((panel) => observer.observe(panel));
   dots.addEventListener("click", (event) => {
     const button = event.target.closest("[data-home-index]");
-    if (button) render(Number(button.dataset.homeIndex));
+    if (!button) return;
+    const index = Number(button.dataset.homeIndex);
+    panels[index]?.scrollIntoView({
+      behavior: reduceMotion.matches ? "auto" : "smooth",
+      block: "start"
+    });
   });
-  root.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "mouse") return;
-    pointerStartX = event.clientX;
-  });
-  root.addEventListener("pointerup", (event) => {
-    if (pointerStartX === null) return;
-    const distance = event.clientX - pointerStartX;
-    pointerStartX = null;
-    if (Math.abs(distance) > 48) move(distance > 0 ? -1 : 1);
-  });
-  root.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowLeft") move(-1);
-    if (event.key === "ArrowRight") move(1);
-  });
-  reduceMotion.addEventListener?.("change", () => render(activeIndex));
 
-  render(0);
+  setActive(0);
+  setLang(getLang());
 }
 
 function bilingualPair(value) {

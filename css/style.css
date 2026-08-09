@@ -484,28 +484,24 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* ============================================================
    IMMERSIVE COLLECTION HOME
    ============================================================ */
-.home-page { background: var(--ink); }
+.home-page { overflow-x: hidden; background: var(--ink); }
+html.home-scroll-page {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 0;
+}
 .home-page .site-header {
   position: fixed;
   inset: 0 0 auto;
   color: var(--white);
-  background: linear-gradient(to bottom, rgba(34, 27, 24, 0.48), transparent);
+  background: linear-gradient(to bottom, rgba(34, 27, 24, 0.54), rgba(34, 27, 24, 0.08) 78%, transparent);
   border-bottom-color: transparent;
   backdrop-filter: none;
-  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
-.home-page .site-header.scrolled {
-  color: var(--ink);
-  background: rgba(251, 244, 238, 0.94);
-  border-bottom-color: var(--line);
-  backdrop-filter: blur(12px);
-}
-.home-page .site-header:not(.scrolled) .logo,
-.home-page .site-header:not(.scrolled) .nav-links a { color: var(--white); }
-.home-page .site-header:not(.scrolled) .nav-links a.active::after {
-  background: var(--white);
-}
-.home-page .site-header:not(.scrolled) .menu-btn {
+.home-page .site-header .logo,
+.home-page .site-header .nav-links a { color: var(--white); text-shadow: 0 1px 15px rgba(25, 18, 16, 0.35); }
+.home-page .site-header .nav-links a.active::after { background: var(--white); }
+.home-page .site-header .menu-btn {
   color: var(--white);
   border-color: rgba(255, 255, 255, 0.55);
 }
@@ -513,15 +509,33 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .collection-hero {
   position: relative;
-  min-height: 100svh;
-  overflow: hidden;
+  width: 100%;
   background: #302824;
   color: var(--white);
   touch-action: pan-y;
 }
-.collection-hero .hero-showcase-stage,
-.collection-hero .hero-showcase-link,
-.collection-hero .hero-showcase-media {
+.collection-hero .hero-showcase-stage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.collection-panel {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 540px;
+  overflow: hidden;
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  background: #302824;
+}
+.collection-panel .hero-showcase-link,
+.collection-panel .hero-showcase-media {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -530,11 +544,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: transparent;
   box-shadow: none;
 }
-.collection-hero .hero-showcase-link { color: var(--white); }
-.collection-hero .hero-showcase-media { animation: showcase-in 0.45s ease both; }
+.collection-panel .hero-showcase-link { color: var(--white); }
+.collection-panel .hero-showcase-media { animation: showcase-in 0.55s ease both; }
 .collection-media { position: absolute; inset: 0; overflow: hidden; }
 .collection-backdrop,
-.collection-hero .collection-feature {
+.collection-panel .collection-feature {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -545,23 +559,23 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   filter: blur(26px) brightness(0.72) saturate(0.9);
   transform: scale(1.08);
 }
-.collection-hero .collection-feature {
+.collection-panel .collection-feature {
   z-index: 1;
   object-fit: contain;
   object-position: center center;
   filter: drop-shadow(0 12px 34px rgba(26, 20, 18, 0.22));
 }
-.collection-hero .hero-showcase-media::after {
+.collection-panel .hero-showcase-media::after {
   z-index: 2;
   background:
-    linear-gradient(90deg, rgba(32, 25, 22, 0.8) 0%, rgba(32, 25, 22, 0.42) 34%, transparent 66%),
-    linear-gradient(to top, rgba(32, 25, 22, 0.52), transparent 48%);
+    linear-gradient(90deg, rgba(32, 25, 22, 0.76) 0%, rgba(32, 25, 22, 0.38) 35%, transparent 66%),
+    linear-gradient(to top, rgba(32, 25, 22, 0.48), transparent 48%);
 }
-.collection-hero .hero-showcase-caption {
+.collection-panel .hero-showcase-caption {
   z-index: 3;
   left: clamp(22px, 8vw, 140px);
   right: auto;
-  bottom: clamp(90px, 12vh, 128px);
+  bottom: clamp(92px, 12vh, 132px);
   width: min(500px, calc(100vw - 100px));
   padding: 0;
   color: var(--white);
@@ -569,16 +583,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: none;
   backdrop-filter: none;
 }
-.collection-hero .hero-showcase-category {
+.collection-panel .hero-showcase-category {
   margin-bottom: 12px;
   color: rgba(255, 255, 255, 0.84);
   font-size: 0.72rem;
   letter-spacing: 0.16em;
 }
-.collection-hero .hero-showcase-name {
+.collection-panel .hero-showcase-name {
   margin: 0 0 14px;
   color: var(--white);
-  font-size: clamp(3.3rem, 7.5vw, 7.2rem);
+  font-size: clamp(3.3rem, 7.2vw, 7rem);
   line-height: 0.92;
   text-shadow: 0 2px 24px rgba(24, 18, 16, 0.28);
 }
@@ -600,26 +614,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
-.collection-hero .hero-showcase-arrow {
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  border-color: rgba(255, 255, 255, 0.58);
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(8px);
-}
-.collection-hero .hero-showcase-arrow svg {
-  width: 20px;
-  height: 20px;
-  margin: auto;
-  stroke: currentColor;
-  stroke-width: 1.7;
-}
-.collection-hero .hero-showcase-prev { left: 26px; }
-.collection-hero .hero-showcase-next { right: 26px; }
 .collection-hero .hero-showcase-dots {
-  top: 28%;
-  right: 18px;
+  position: fixed;
+  z-index: 44;
+  top: 50%;
+  right: max(8px, env(safe-area-inset-right));
   left: auto;
   display: flex;
   flex-direction: column;
@@ -631,8 +630,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .collection-hero .hero-showcase-dot {
   position: relative;
-  width: 44px;
-  min-height: 34px;
+  width: 46px;
+  min-height: 32px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -646,12 +645,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   height: 5px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.56);
+  box-shadow: 0 1px 7px rgba(24, 18, 16, 0.4);
   transform: translateY(-50%);
   transition: height 0.2s ease, background 0.2s ease;
 }
-.collection-hero .hero-showcase-dot.active { width: 44px; background: transparent; }
+.collection-hero .hero-showcase-dot:hover::after,
+.collection-hero .hero-showcase-dot:focus-visible::after { background: var(--white); }
+.collection-hero .hero-showcase-dot:focus-visible { outline: 2px solid var(--white); outline-offset: -7px; }
+.collection-hero .hero-showcase-dot.active { width: 46px; background: transparent; }
 .collection-hero .hero-showcase-dot.active::after {
-  height: 22px;
+  height: 25px;
   background: var(--white);
 }
 .hero-counter {
@@ -663,56 +666,65 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-size: 0.68rem;
   letter-spacing: 0.08em;
 }
-.hero-swipe-hint { display: none; }
+.hero-scroll-hint {
+  position: absolute;
+  z-index: 3;
+  left: clamp(22px, 8vw, 140px);
+  bottom: 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.76);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.hero-scroll-line {
+  width: 42px;
+  height: 1px;
+  background: currentColor;
+}
 
 @media (max-width: 700px) {
-  .collection-hero .collection-feature {
-    height: 82%;
-    top: auto;
-    bottom: 0;
-    object-position: center bottom;
+  .collection-panel { min-height: 500px; }
+  .collection-panel .collection-feature {
+    object-fit: cover;
+    object-position: center center;
   }
-  .collection-hero .hero-showcase-media::after {
+  .collection-panel .hero-showcase-media::after {
     background:
-      linear-gradient(to top, rgba(31, 24, 22, 0.84) 0%, rgba(31, 24, 22, 0.46) 47%, transparent 72%),
-      linear-gradient(to bottom, rgba(31, 24, 22, 0.32), transparent 24%);
+      linear-gradient(to top, rgba(31, 24, 22, 0.8) 0%, rgba(31, 24, 22, 0.42) 43%, transparent 68%),
+      linear-gradient(to bottom, rgba(31, 24, 22, 0.38), transparent 25%);
   }
-  .collection-hero .hero-showcase-caption {
+  .collection-panel .hero-showcase-caption {
     left: 20px;
-    right: 62px;
-    bottom: 104px;
+    right: 58px;
+    bottom: 96px;
     width: auto;
   }
-  .collection-hero .hero-showcase-category { margin-bottom: 8px; font-size: 0.62rem; }
-  .collection-hero .hero-showcase-name { margin-bottom: 10px; font-size: clamp(2.8rem, 16vw, 4.5rem); }
-  .hero-showcase-description { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.45; }
+  .collection-panel .hero-showcase-category { margin-bottom: 7px; font-size: 0.6rem; }
+  .collection-panel .hero-showcase-name { margin-bottom: 8px; font-size: clamp(2.55rem, 14vw, 4rem); line-height: 0.94; }
+  .hero-showcase-description { max-width: 31ch; margin-bottom: 10px; font-size: 0.84rem; line-height: 1.38; }
   .hero-collection-link { min-height: 40px; font-size: 0.65rem; }
-  .collection-hero .hero-showcase-arrow { top: 49%; width: 44px; height: 44px; }
-  .collection-hero .hero-showcase-prev { left: 14px; }
-  .collection-hero .hero-showcase-next { right: 14px; }
-  .collection-hero .hero-showcase-dots { right: 4px; }
+  .collection-hero .hero-showcase-dots { right: max(0px, env(safe-area-inset-right)); }
   .collection-hero .hero-showcase-dot { width: 40px; min-height: 30px; }
   .collection-hero .hero-showcase-dot.active { width: 40px; }
   .collection-hero .hero-showcase-dot::after { right: 11px; }
   .hero-counter { right: 18px; bottom: 22px; }
-  .hero-swipe-hint {
-    position: absolute;
-    z-index: 3;
+  .hero-scroll-hint {
     left: 20px;
     bottom: 22px;
-    display: block;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.72);
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    pointer-events: none;
+    font-size: 0.58rem;
   }
+  .hero-scroll-line { width: 28px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .collection-hero .hero-showcase-media { animation: none; }
+  html.home-scroll-page { scroll-behavior: auto; }
+  .collection-panel .hero-showcase-media { animation: none; }
   .collection-hero .hero-showcase-dot::after { transition: none; }
 }
 
