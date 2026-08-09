@@ -179,8 +179,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   gap: 6px;
 }
 .lang-toggle button {
-  width: 35px;
-  height: 35px;
+  width: 32px;
+  height: 32px;
   display: inline-grid;
   place-items: center;
   padding: 0;
@@ -214,7 +214,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .nav-right { gap: 6px; }
   .inquiry-trigger { min-height: 38px; padding: 5px 7px; }
   .lang-toggle { gap: 4px; }
-  .lang-toggle button { width: 34px; height: 34px; }
+  .lang-toggle button { width: 31px; height: 31px; }
   .menu-btn { padding: 7px 8px; font-size: 0.66rem; }
 }
 
@@ -1052,7 +1052,7 @@ html.home-scroll-page {
   background: transparent;
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.74rem;
   letter-spacing: 0.02em;
 }
 .inquiry-add:hover, .inquiry-add.added { background: var(--ink); color: var(--cream); }
@@ -1070,10 +1070,10 @@ html.home-scroll-page {
     font-weight: 500;
   }
   .inquiry-add {
-    min-height: 46px;
+    min-height: 50px;
     margin-top: 7px;
     padding: 8px 4px;
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     line-height: 1.25;
   }
 }
@@ -1540,9 +1540,9 @@ html.home-scroll-page {
 .breadcrumb a:hover { color: var(--rose-deep); }
 
 /* language visibility: JS toggles the document language */
-[data-lang="th"] { display: none !important; }
-html[lang="th"] [data-lang="en"] { display: none !important; }
-html[lang="th"] [data-lang="th"] { display: revert !important; }
+[data-lang="th"] { display: none; }
+html[lang="th"] [data-lang="en"] { display: none; }
+html[lang="th"] [data-lang="th"] { display: revert; }
 
 .empty-state {
   text-align: center;

@@ -17,9 +17,7 @@ const SITE_CONFIG = {
     phone: "+66 97 041 0363",
     phone_href: "tel:+66970410363",
     email: "supportatmillys@gmail.com",
-    email_href: "mailto:supportatmillys@gmail.com",
-    hours_en: "8.30 AM - 6.30 PM (GMT +7)",
-    hours_th: "08.30-18.30 น. (GMT +7)"
+    email_href: "mailto:supportatmillys@gmail.com"
   },
 
   marketplaces: {

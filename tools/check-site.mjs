@@ -138,6 +138,9 @@ for (const product of PRODUCTS) {
     }
   }
 }
+if ("hours_en" in SITE_CONFIG.contact || "hours_th" in SITE_CONFIG.contact) {
+  fail("Business Hours must be removed from the site configuration.");
+}
 
 const htmlFiles = fs.readdirSync(root).filter((file) => file.endsWith(".html"));
 const expectedPages = new Set([
@@ -253,6 +256,13 @@ if (!shopPage.includes("Please reach out directly to discuss wholesale / bulk pr
 if (!styles.includes(".tag-hole, .tag-name, .tag-options, .new-flag { display: none !important; }")) {
   fail("Mobile catalogue cards must hide all text except price and inquiry action.");
 }
+if (/html\[lang="th"\]\s+\[data-lang="th"\]\s*\{[^}]*display:\s*revert\s*!important/.test(styles)) {
+  fail("The global Thai visibility rule must not override component-level responsive hiding.");
+}
+if (!styles.includes(".inquiry-add {") || !styles.includes("font-size: 0.74rem")
+  || !styles.includes("font-size: 0.7rem")) {
+  fail("Shop card inquiry text is missing its measured desktop and mobile enlargement.");
+}
 
 const homepage = read("index.html");
 if (homepage.includes("hero-showcase-arrow")) {
@@ -296,15 +306,38 @@ if (!header.includes('class="flag-art flag-art-en"') || !header.includes('class=
 if (!header.includes('fill="#1D317E"')) {
   fail("The English language control is missing the stronger-blue Union Jack artwork.");
 }
+if (!styles.includes("width: 32px;") || !styles.includes("height: 32px;")
+  || !styles.includes("width: 31px; height: 31px;")) {
+  fail("The equally reduced desktop and narrow-mobile language-control sizes are missing.");
+}
 
 const footer = read("partials/footer.html");
-if (!footer.includes('/contact.html#email-contact') || footer.includes("All rights reserved")) {
+const footerEmailMatches = footer.match(/href="\/contact\.html#email-contact"/g) || [];
+const footerLazadaIndex = footer.indexOf('data-config-href="marketplaces.lazada"');
+const footerEmailIndex = footer.indexOf('href="/contact.html#email-contact"');
+if (footerEmailMatches.length !== 1 || footerEmailIndex < footerLazadaIndex || footer.includes("All rights reserved")) {
   fail("The footer email link or copyright removal is incomplete.");
+}
+if (!footer.includes('<h3><span data-lang="en">Contact Us</span><span data-lang="th">')
+  || footer.includes("Order Via")) {
+  fail("The footer marketplace/contact group must use the bilingual Contact Us heading.");
 }
 
 const contactPage = read("contact.html");
 if (!contactPage.includes("Contact details") || !contactPage.includes('id="email-contact"')) {
   fail("The Contact details heading or email anchor is missing.");
+}
+if (contactPage.includes("Business Hours") || contactPage.includes("เวลาทำการ")
+  || contactPage.includes("8.30 AM - 6.30 PM") || contactPage.includes("08.30-18.30")) {
+  fail("Business Hours must be removed from the customer-facing Contact page.");
+}
+if (!contactPage.includes('data-config-href="marketplaces.line"')
+  || !contactPage.includes("@milly.2023")) {
+  fail("The Contact details table is missing its configured LINE row.");
+}
+const contactTableMatch = contactPage.match(/<table class="[^"]*\bbusiness-table\b[^"]*">([\s\S]*?)<\/table>/);
+if (!contactTableMatch || (contactTableMatch[1].match(/<tr(?:\s|>)/g) || []).length !== 3) {
+  fail("Contact details must contain exactly Phone, Email, and LINE rows.");
 }
 if (!mainScript.includes("Please reach out directly to discuss wholesale / bulk pricing.")) {
   fail("Product detail pages are missing the wholesale pricing notice.");
