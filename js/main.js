@@ -187,7 +187,11 @@ function productCardHTML(product) {
   return `
     <article class="tag-card">
       <span class="tag-hole" aria-hidden="true"></span>
-      <a class="tag-product-link" href="/product.html?code=${encodeURIComponent(product.code)}">
+      <a class="tag-product-link" href="/product.html?code=${encodeURIComponent(product.code)}"
+        data-aria-en="View details for ${escapeHTML(product.name.en)}"
+        data-aria-th="ดูรายละเอียด ${escapeHTML(product.name.th)}">
+      <span class="sr-only" data-lang="en">${escapeHTML(product.name.en)}</span>
+      <span class="sr-only" data-lang="th">${escapeHTML(product.name.th)}</span>
       <div class="tag-photo">
         ${photo}
         ${product.is_new ? `
@@ -224,12 +228,6 @@ function renderGrid(target, products) {
   setLang(getLang());
 }
 
-function filterLabelHTML(key, label) {
-  return `<span class="swatch swatch-${escapeHTML(key)}" aria-hidden="true"></span>
-    <span data-lang="en">${escapeHTML(label.en)}</span>
-    <span data-lang="th">${escapeHTML(label.th)}</span>`;
-}
-
 function productSearchText(product) {
   const category = PRODUCT_CATEGORIES[product.category];
   return [
@@ -242,13 +240,14 @@ function productSearchText(product) {
 
 function initShopPage() {
   const grid = document.getElementById("productGrid");
-  const filters = document.getElementById("categoryFilters");
+  const categoryFilter = document.getElementById("categoryFilter");
   const search = document.getElementById("catalogueSearch");
   const stockFilter = document.getElementById("stockFilter");
   const sort = document.getElementById("sortProducts");
   const results = document.getElementById("catalogueResults");
+  const resultsAnchor = document.getElementById("catalogue-results");
   const reset = document.getElementById("resetCatalogue");
-  if (!grid || !filters || !search || !stockFilter || !sort || !results || !reset) return;
+  if (!grid || !categoryFilter || !search || !stockFilter || !sort || !results || !resultsAnchor || !reset) return;
 
   const populatedCategories = Object.keys(PRODUCT_CATEGORIES)
     .filter((category) => PRODUCTS.some((product) => product.category === category));
@@ -257,14 +256,15 @@ function initShopPage() {
     ...populatedCategories.map((key) => ({ key, label: PRODUCT_CATEGORIES[key] }))
   ];
 
-  filters.innerHTML = filterData.map(({ key, label }) => `
-    <button type="button" class="swatch-pill" data-category="${escapeHTML(key)}">
-      ${filterLabelHTML(key, label)}
-    </button>`).join("");
+  categoryFilter.innerHTML = filterData.map(({ key, label }) => `
+    <option value="${escapeHTML(key)}"
+      data-en="Category: ${escapeHTML(label.en)}"
+      data-th="หมวดหมู่: ${escapeHTML(label.th)}">Category: ${escapeHTML(label.en)}</option>`).join("");
 
   const params = new URLSearchParams(window.location.search);
   let activeCategory = params.get("category") || "all";
   if (!filterData.some((filter) => filter.key === activeCategory)) activeCategory = "all";
+  categoryFilter.value = activeCategory;
 
   search.value = params.get("q") || "";
   stockFilter.value = ["available", "sold_out"].includes(params.get("stock")) ? params.get("stock") : "all";
@@ -302,19 +302,13 @@ function initShopPage() {
     results.textContent = countLabel;
     const hasFilters = activeCategory !== "all" || query || stockFilter.value !== "all" || sort.value !== "recommended";
     reset.hidden = !hasFilters;
-    filters.querySelectorAll(".swatch-pill").forEach((button) => {
-      const active = button.dataset.category === activeCategory;
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", active ? "true" : "false");
-    });
+    categoryFilter.value = activeCategory;
   }
 
-  filters.querySelectorAll(".swatch-pill").forEach((button) => {
-      button.addEventListener("click", () => {
-      activeCategory = button.dataset.category;
-      updateUrl();
-      applyFilter();
-    });
+  categoryFilter.addEventListener("change", () => {
+    activeCategory = categoryFilter.value;
+    updateUrl();
+    applyFilter();
   });
 
   let searchTimer;
@@ -328,6 +322,7 @@ function initShopPage() {
   }));
   reset.addEventListener("click", () => {
     activeCategory = "all";
+    categoryFilter.value = "all";
     search.value = "";
     stockFilter.value = "all";
     sort.value = "recommended";
@@ -345,15 +340,25 @@ function initShopPage() {
   });
 
   const savedState = storageGet(sessionStorage, "milly_shop_state");
+  let restoredScroll = false;
   if (savedState) {
     try {
       const state = JSON.parse(savedState);
-      if (state.url === window.location.href) requestAnimationFrame(() => window.scrollTo(0, state.scrollY || 0));
+      if (state.url === window.location.href) {
+        restoredScroll = true;
+        requestAnimationFrame(() => window.scrollTo(0, state.scrollY || 0));
+      }
     } catch { /* Ignore damaged session state. */ }
     storageSet(sessionStorage, "milly_shop_state", "");
   }
 
   applyFilter();
+  setLang(getLang());
+  if (!restoredScroll && activeCategory !== "all" && window.location.hash === "#catalogue-results") {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      resultsAnchor.scrollIntoView({ block: "start" });
+    }));
+  }
 }
 
 function homeShowcaseProducts() {
@@ -442,7 +447,7 @@ function initHomeShowcase() {
         data-collection-index="${index}" data-collection-category="${escapeHTML(product.category)}"
         aria-labelledby="collection-title-${escapeHTML(product.category)}">
       <a class="hero-showcase-link"
-        href="/shop.html?category=${encodeURIComponent(product.category)}"
+        href="/shop.html?category=${encodeURIComponent(product.category)}#catalogue-results"
         data-aria-en="Browse the ${escapeHTML(category.en)} collection"
         data-aria-th="ดูคอลเลกชัน${escapeHTML(category.th)}">
         <div class="hero-showcase-media">

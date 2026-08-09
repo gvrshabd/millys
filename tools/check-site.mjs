@@ -213,6 +213,7 @@ if (!/Disallow:\s*\//.test(robots)) {
 }
 
 const mainScript = read("js/main.js");
+const styles = read("css/style.css");
 if (!mainScript.includes('encodeURIComponent("Support")')) {
   fail('The contact email subject must remain "Support".');
 }
@@ -225,9 +226,25 @@ if (!mainScript.includes('encodeURIComponent("Product Inquiry — Milly\'s")')) 
 if (!mainScript.includes("INQUIRY_STORAGE_KEY")) {
   fail("The inquiry basket must persist locally.");
 }
+if (!mainScript.includes('document.getElementById("categoryFilter")') || mainScript.includes("swatch-pill")) {
+  fail("The Shop must use one compact category selector instead of category pills.");
+}
+if (!mainScript.includes('#catalogue-results') || !mainScript.includes("resultsAnchor.scrollIntoView")) {
+  fail("Homepage category links must open the filtered catalogue results directly.");
+}
+
+const shopPage = read("shop.html");
+if (!shopPage.includes('id="categoryFilter"') || shopPage.includes('id="categoryFilters"')) {
+  fail("shop.html is missing the single category-selection bar.");
+}
+if (shopPage.includes("Search the catalogue, compare the options provided for each item")) {
+  fail("The unnecessary Shop introduction is still present.");
+}
+if (!styles.includes(".tag-hole, .tag-name, .tag-options, .new-flag { display: none !important; }")) {
+  fail("Mobile catalogue cards must hide all text except price and inquiry action.");
+}
 
 const homepage = read("index.html");
-const styles = read("css/style.css");
 if (homepage.includes("hero-showcase-arrow")) {
   fail("The homepage must not restore horizontal collection arrows.");
 }
@@ -236,6 +253,22 @@ if (!mainScript.includes('class="collection-panel"') || !mainScript.includes("In
 }
 if (!styles.includes("scroll-snap-type: y proximity") || !styles.includes("scroll-snap-align: start")) {
   fail("The homepage is missing its natural vertical scroll-snap layout.");
+}
+
+for (const category of Object.keys(PRODUCT_CATEGORIES)) {
+  const featured = PRODUCTS.filter((product) => product.category === category && product.home_showcase);
+  if (featured.length !== 1) {
+    fail(`Category ${category} must have exactly one homepage showcase product; found ${featured.length}.`);
+  }
+}
+
+const categoryAudit = read("CATEGORY_AUDIT.md");
+const auditCodes = [...categoryAudit.matchAll(/^\|\s*\d+\s*\|\s*([A-Z0-9-]+)\s*\|/gm)].map((match) => match[1]);
+if (auditCodes.length !== PRODUCTS.length || new Set(auditCodes).size !== PRODUCTS.length) {
+  fail(`CATEGORY_AUDIT.md must contain exactly ${PRODUCTS.length} unique product rows.`);
+}
+for (const code of codes) {
+  if (!auditCodes.includes(code)) fail(`CATEGORY_AUDIT.md is missing product ${code}.`);
 }
 
 const header = read("partials/header.html");

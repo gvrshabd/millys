@@ -51,14 +51,7 @@ const PRODUCTS = [
       "en": "Bohemian Butterfly-Sleeve Drawstring Top",
       "th": "เสื้อโบฮีเมียนแขนปีกผีเสื้อเอวรูด"
     },
-    "category": "tops",
-    "home_showcase": {
-      "image_index": 0,
-      "name": {
-        "en": "Butterfly-Sleeve Drawstring Top",
-        "th": "เสื้อแขนปีกผีเสื้อเอวรูด"
-      }
-    },
+    "category": "kaftans",
     "is_new": true,
     "price": 199,
     "fabric": {
@@ -209,7 +202,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing, Spiral Flower Pattern, One Size",
       "th": "เดรสยาว ทรงปีกค้างคาว ลาย ดอก Spiral FreeSize"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -350,7 +343,7 @@ const PRODUCTS = [
       "en": "Short Dress, Batwing, One Size, New Pattern",
       "th": "เดรสสั้น ทรงปีกค้างคาว Free Size ลายใหม่"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": true,
     "price": 199,
     "fabric": {
@@ -483,7 +476,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing, One Size, New Pattern",
       "th": "เดรสยาว ทรงปีกค้างคาว Free Size ลายเข้าใหม่!!"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": true,
     "price": 259,
     "fabric": {
@@ -803,7 +796,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing, One Size, New Pattern, Very Beautiful",
       "th": "เดรสยาว ทรงปีกค้างคาว Free Size ลายเข้าใหม่สุดสวย!!"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": true,
     "price": 259,
     "fabric": {
@@ -1102,7 +1095,7 @@ const PRODUCTS = [
       "en": "Long Batwing Dress Bohemian Style There Is A Drawstring To Adjust The Waist Size",
       "th": "เดรสยาวทรงค้างคาว สไตล์โบฮีเมียน มีเชือกรูดปรับขนาดเอว"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -1994,7 +1987,7 @@ const PRODUCTS = [
       "en": "Short Dress With Bat Wings Shape Django Elephant Pattern",
       "th": "เดรสสั้น ทรงปีกค้างคาว ลายจังโก้ช้าง"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -2266,7 +2259,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress Paisley Pattern One Size",
       "th": "เดรสสั้นทรงปีกค้างคาว ลายลุกน้ำเถาวัลย์ Free Size"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -2536,7 +2529,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing Double Vine Pattern",
       "th": "เดรสยาว ทรงปีกค้างคาว ลายลูกน้ำเถาวัลย์คู่"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -2639,7 +2632,7 @@ const PRODUCTS = [
       "en": "Batwing Dress, Spun Rayon Fabric, One Size, Plus Size",
       "th": "เดรสทรงปีกค้างคาว ผ้าสปันเรยอน ฟรีไซส์ พลัสไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 499,
     "fabric": {
@@ -5523,7 +5516,7 @@ const PRODUCTS = [
       "en": "Short Dress, Batwing, Jango Pattern, Waist Tie, One Size",
       "th": "เดรสสั้น ทรงปีกค้างคาว ลายจังโก้ เชือกผูกเอว ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -6755,7 +6748,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress Double Vine Pattern, One Size",
       "th": "เดรสสั้นทรงปีกค้างคาว ลายเถาวัลย์คู่ ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -6892,7 +6885,7 @@ const PRODUCTS = [
       "en": "Long Batwing Dress Small Paisley Pattern Beautiful And Stylish",
       "th": "เดรสยาวทรงปีกค้างคาว ลายลูกน้ำเล็ก สวยแบบมีสไตล์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -7115,7 +7108,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing, Peacock Wing Pattern, Waist Tie",
       "th": "เดรสยาว ทรงปีกค้างคาว ลายปีกนกยูง เชือกผูกเอว"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -7351,7 +7344,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress, Two-Tone Thai Pattern, Soft And Comfortable Fabric",
       "th": "เดรสสั้นทรงปีกค้างคาว ลายไทยทูโทน ผ้านุ่มสบาย"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -7573,7 +7566,7 @@ const PRODUCTS = [
       "en": "Bohemian Style Short Bat Shirt With Peony Pattern And Drawstring To Adjust The Waist",
       "th": "เสื้อค้างคาวตัวสั้นสไตล์โบฮีเมียน ลายดอกโบตั๋น พร้อมเชือกรูดปรับเอว"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -7698,7 +7691,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing, Thai Modern Pattern, Waist Tie, One Size",
       "th": "เดรสยาว ทรงปีกค้างคาว ลายไทยโมเดิล เชือกผูกเอว ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -7835,7 +7828,7 @@ const PRODUCTS = [
       "en": "Short Dress, Batwing, Ruched Waist, Persian Flower Pattern, One Size",
       "th": "เดรสสั้น ทรงปีกค้างคาว เอวรูด ลายดอกเปอร์เซีย ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -8351,7 +8344,7 @@ const PRODUCTS = [
       "en": "Batwing Style Shirt With Drawstring Waist, Thai Pattern, Bohemian Style",
       "th": "เสื้อทรงปีกค้างคาวมีเชือกรูดเอว ลายไทย สไตล์โบฮีเมียน"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -8500,7 +8493,7 @@ const PRODUCTS = [
       "en": "Long Batwing Dress \"Diamond Pattern\" One Size",
       "th": "เดรสยาวทรงปีกค้างคาว \"ลายข้าวหลามตัด\" FreeSize"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -8623,7 +8616,7 @@ const PRODUCTS = [
       "en": "\"Batwing Long Dress, Trident Pattern\", One Size",
       "th": "“เดรสยาวทรงปีกค้างคาว ลายตรีศูล” ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -8742,7 +8735,7 @@ const PRODUCTS = [
       "en": "Long Sleeve Peach Top Bohemian Style, One Size",
       "th": "เสื้อผ้าพีชแขนยาว สไตล์โบฮีเมียน ฟรีไซร์"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -8903,7 +8896,7 @@ const PRODUCTS = [
       "en": "Short Dress, Batwing, White Elephant Pattern, Drawstring Waist, One Size",
       "th": "เดรสสั้น ทรงปีกค้างคาว ลายช้างเผือก เชือกรูดเอว ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -9022,7 +9015,7 @@ const PRODUCTS = [
       "en": "Bohemian Style Short Bat Dress With Lotus Petal Pattern. Has An Adjustable Waist Strap",
       "th": "ชุดเดรสค้างคาวตัวสั้นสไตล์โบฮีเมียนลายกลีบบัว มีสายปรับรูดเอว"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -9155,7 +9148,7 @@ const PRODUCTS = [
       "en": "Bohemian Shirt Butterfly-Sleeve Top Batwing Shirt, Drawstring Waist Shirt, Grade A, No Defects",
       "th": "เสื้อโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว เสื้อเอวรูด เกรด A ไม่มีตำหนิ"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -9266,7 +9259,7 @@ const PRODUCTS = [
       "en": "Bohemian Shirt Butterfly-Sleeve Top Batwing Shirt, Drawstring Waist Shirt, Grade A, No Defects, Product Not Like The Market, Quality A+",
       "th": "เสื้อโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว เสื้อเอวรูด เกรด A ไม่มีตำหนิ สินค้าไม่เหมือนตลาด คุณภาพ A+"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -9377,7 +9370,7 @@ const PRODUCTS = [
       "en": "Bohemian Dress, Butterfly-Sleeve Top Batwing Shirt, Beautiful Dress, Comfortable To Wear, Dubai Pajamas, Drawstring Waist Shirt, Dress",
       "th": "ชุดโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว ชุดสวย ใส่สบาย ชุดนอนดูไบ เสื้อเอวรูด ชุดเดรส"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -9513,6 +9506,13 @@ const PRODUCTS = [
       "th": "เสื้อลายดอก เสื้อป่านลายดอก เสื้อสงกรานต์ เสื้อชายหาด เสื้อใส่สบาย เสื้อทรงยาว เสื้อผ่าหน้า"
     },
     "category": "tops",
+    "home_showcase": {
+      "image_index": 0,
+      "name": {
+        "en": "Floral Beach Shirt",
+        "th": "เสื้อลายดอกทรงยาว"
+      }
+    },
     "is_new": false,
     "price": 229,
     "fabric": {
@@ -9637,7 +9637,7 @@ const PRODUCTS = [
       "en": "Long Dress, Batwing. There Is A Drawstring To Tighten The Waist Size, Thai Pattern, Bohemian Style",
       "th": "เดรสยาว ทรงปีกค้างคาวตัวยาว มีเชือกรูดปรัดขนาดเอว ลายไทย สไตล์โบฮีเมียน"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -9979,7 +9979,7 @@ const PRODUCTS = [
       "en": "Short Bohemian Style Batwing Shirt With Black And White Pattern. There Is A Drawstring To Adjust The Waist Size",
       "th": "เสื้อทรงค้างคาวสไตล์โบฮีเมียนลายขาวดำตัวสั้น มีสายปรับรูดขนาดเอว"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -10116,7 +10116,7 @@ const PRODUCTS = [
       "en": "Bohemian Shirt Butterfly-Sleeve Top Batwing Shirt, Drawstring Waist Shirt, Grade A, No Defects, Product Not Like The Market, Quality A+",
       "th": "เสื้อโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว เสื้อเอวรูด เกรด A ไม่มีตำหนิ สินค้าไม่เหมือนตลาด คุณภาพ A+"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -10231,7 +10231,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress, Safari Flowers, Pattern All Over",
       "th": "เดรสสั้นทรงปีกค้างคาว บุปผาซาฟารี ลวดลายทั้งตัว"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -10356,7 +10356,7 @@ const PRODUCTS = [
       "en": "Short Dress With Bat Wings Shape Small Paisley Pattern, One Size",
       "th": "เดรสสั้น ทรงปีกค้างคาว ลายลูกน้ำเล็ก ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -10505,7 +10505,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress Persian Paisley Pattern, One Size",
       "th": "เดรสสั้นทรงปีกค้างคาว ลายลูกน้ำเปอร์เซีย ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -10735,7 +10735,7 @@ const PRODUCTS = [
       "en": "Cropped Shirts, Front Slit Collar Shirts, Collared Shirts, Cotton Shirts Collared Shirt",
       "th": "เสื้อตัดต่อ เสื้อคอปกผ่าหน้า เสื้อคอปก เสื้อค๊อตต๊อน เสื้อเชิ้ตคอปก"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": false,
     "price": 259,
     "fabric": {
@@ -10824,7 +10824,7 @@ const PRODUCTS = [
       "en": "Songkran Shirt With Beautiful Floral Pattern, Three-Quarter Sleeves, Linen Fabric With Pierced Chinese Collar",
       "th": "เสื้อสงกรานต์ลายดอกสวยๆ แขนสามส่วน ผ้าป่านคอจีนเจาะ"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -11742,7 +11742,7 @@ const PRODUCTS = [
       "en": "Bohemian Shirt Butterfly-Sleeve Top Batwing Shirt, Drawstring Waist Shirt, Grade A, No Defects, Product Not Like The Market, Quality A+",
       "th": "เสื้อโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว เสื้อเอวรูด เกรด A ไม่มีตำหนิ สินค้าไม่เหมือนตลาด คุณภาพ A+"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -12554,7 +12554,7 @@ const PRODUCTS = [
       "en": "Short Dress, Batwing, New Pattern, Waist Tie, One Size",
       "th": "เดรสสั้น ทรงปีกค้างคาว ลายใหม่ เชือกผูกเอว ฟรีไซส์"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": true,
     "price": 199,
     "fabric": {
@@ -12811,7 +12811,7 @@ const PRODUCTS = [
       "en": "Floral Pattern Shirt. Floral Pattern Hemp Shirt. Songkran Shirts, Beach Shirts, Comfortable Shirts, Long Shirts, Front Slit Shirts",
       "th": "เสื้อลายดอก เสื้อป่านลายดอก เสื้อสงกรานต์ เสื้อชายหาด เสื้อใส่สบาย เสื้อทรงยาว เสื้อผ่าหน้า"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": false,
     "price": 229,
     "fabric": {
@@ -13381,7 +13381,7 @@ const PRODUCTS = [
       "en": "Single Strap, Very Cute Fabric Work. Soft Fabric, Comfortable To Wear, Great Price",
       "th": "สายเดี่ยวงานผ้าสุดน่ารัก ผ้านุ่มใส่สบาย ราคาคุ้มๆ"
     },
-    "category": "tops",
+    "category": "dresses",
     "is_new": true,
     "price": 129,
     "fabric": {
@@ -13796,7 +13796,7 @@ const PRODUCTS = [
       "en": "Short Batwing Dress Bohemian Style There Is A Drawstring To Adjust The Waist Size",
       "th": "เดรสสั้นทรงค้างคาว สไตล์โบฮีเมียน มีเชือกรูดปรับขนาดเอว"
     },
-    "category": "dresses",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {
@@ -14040,7 +14040,7 @@ const PRODUCTS = [
       "en": "Bohemian Shirt Butterfly-Sleeve Top Batwing Shirt, Drawstring Waist Shirt, Grade A, No Defects, Product Not Like The Market, Quality A+",
       "th": "เสื้อโบฮีเมียน เสื้อปีกผีเสื้อ เสื้อทรงค้างคาว เสื้อเอวรูด เกรด A ไม่มีตำหนิ สินค้าไม่เหมือนตลาด คุณภาพ A+"
     },
-    "category": "tops",
+    "category": "kaftans",
     "is_new": false,
     "price": 199,
     "fabric": {

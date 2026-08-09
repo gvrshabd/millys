@@ -742,14 +742,6 @@ html.home-scroll-page {
 }
 .section-alt { background: var(--cream-deep); }
 
-/* Category swatch pills */
-.category-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
-}
-
 .catalogue-tools {
   display: grid;
   gap: 14px;
@@ -777,6 +769,34 @@ html.home-scroll-page {
   color: var(--ink);
   font: inherit;
 }
+.catalogue-category { grid-column: 1 / -1; }
+.category-select-shell { position: relative; }
+.catalogue-tools .category-select-shell select {
+  min-height: 50px;
+  padding: 10px 52px 10px 16px;
+  appearance: none;
+  border-color: var(--rose-deep);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+.category-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  color: var(--rose-deep);
+  font-size: 1.45rem;
+  line-height: 1;
+  transform: translateY(-58%);
+  pointer-events: none;
+}
+.catalogue-results-anchor {
+  height: 1px;
+  scroll-margin-top: 18px;
+  outline: none;
+}
 .catalogue-status {
   min-height: 32px;
   display: flex;
@@ -800,29 +820,6 @@ html.home-scroll-page {
 @media (min-width: 700px) {
   .catalogue-tools { grid-template-columns: minmax(260px, 1fr) 190px 210px; align-items: end; }
 }
-.swatch-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 8px 16px 8px 8px;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  letter-spacing: 0.03em;
-  background: var(--white);
-  transition: border-color 0.15s ease;
-}
-.swatch-pill:hover, .swatch-pill.active { border-color: var(--rose-deep); color: var(--rose-deep); }
-.swatch-pill .swatch { width: 20px; height: 20px; border-radius: 50%; }
-.swatch-dresses { background: var(--rose); }
-.swatch-kaftans { background: var(--sage); }
-.swatch-tops { background: #D7A879; }
-.swatch-sets { background: #A6A7C4; }
-.swatch-bags { background: #B58A6A; }
-.swatch-pants { background: #8FA39A; }
-.swatch-skirts { background: #D0A3B3; }
-.swatch-all { background: linear-gradient(135deg, var(--rose), var(--sage)); }
 
 /* ============================================================
    PRODUCT GRID + HANG-TAG CARD (signature element)
@@ -934,6 +931,27 @@ html.home-scroll-page {
   letter-spacing: 0.02em;
 }
 .inquiry-add:hover, .inquiry-add.added { background: var(--ink); color: var(--cream); }
+
+@media (max-width: 639px) {
+  .catalogue-section .container { padding-right: 12px; padding-left: 12px; }
+  .product-grid { gap: 10px; }
+  .tag-card { padding: 6px 6px 10px; }
+  .tag-card:hover { transform: none; }
+  .tag-hole, .tag-name, .tag-options, .new-flag { display: none !important; }
+  .tag-photo { margin-bottom: 7px; }
+  .tag-price {
+    margin: 0 4px;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .inquiry-add {
+    min-height: 46px;
+    margin-top: 7px;
+    padding: 8px 4px;
+    font-size: 0.62rem;
+    line-height: 1.25;
+  }
+}
 
 /* ============================================================
    PRODUCT DETAIL

@@ -26,14 +26,21 @@
       <span class="eyebrow" data-lang="th">สินค้าทั้งหมด</span>
       <h1 data-lang="en">Shop</h1>
       <h1 data-lang="th">สินค้า</h1>
-      <p style="max-width:62ch;" data-lang="en">Search the catalogue, compare the options provided for each item, and collect products in one inquiry.</p>
-      <p style="max-width:62ch;" data-lang="th">ค้นหาและเปรียบเทียบตัวเลือกของสินค้า แล้วรวบรวมสินค้าที่สนใจไว้ในรายการสอบถามเดียว</p>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section catalogue-section">
     <div class="container">
       <div class="catalogue-tools" aria-label="Catalogue search and filters">
+        <div class="catalogue-category">
+          <label for="categoryFilter">
+            <span data-lang="en">Product category</span><span data-lang="th">หมวดหมู่สินค้า</span>
+          </label>
+          <div class="category-select-shell">
+            <select id="categoryFilter"></select>
+            <span class="category-select-chevron" aria-hidden="true">⌄</span>
+          </div>
+        </div>
         <div class="catalogue-search">
           <label for="catalogueSearch">
             <span data-lang="en">Search catalogue</span><span data-lang="th">ค้นหาสินค้า</span>
@@ -60,7 +67,7 @@
           </select>
         </div>
       </div>
-      <div class="category-row" id="categoryFilters" aria-label="Product categories"></div>
+      <div id="catalogue-results" class="catalogue-results-anchor" tabindex="-1"></div>
       <div class="catalogue-status">
         <p id="catalogueResults" aria-live="polite"></p>
         <button type="button" class="text-button" id="resetCatalogue">
