@@ -32,15 +32,6 @@
   <section class="section catalogue-section">
     <div class="container">
       <div class="catalogue-tools" aria-label="Catalogue search and filters">
-        <div class="catalogue-category">
-          <label for="categoryFilter">
-            <span data-lang="en">Product category</span><span data-lang="th">หมวดหมู่สินค้า</span>
-          </label>
-          <div class="category-select-shell">
-            <select id="categoryFilter"></select>
-            <span class="category-select-chevron" aria-hidden="true">⌄</span>
-          </div>
-        </div>
         <div class="catalogue-search">
           <label for="catalogueSearch">
             <span data-lang="en">Search catalogue</span><span data-lang="th">ค้นหาสินค้า</span>
@@ -67,6 +58,24 @@
           </select>
         </div>
       </div>
+      <div class="catalogue-category">
+        <span class="catalogue-category-label" id="categoryFilterTitle">
+          <span data-lang="en">Product category</span><span data-lang="th">หมวดหมู่สินค้า</span>
+        </span>
+        <div class="category-picker">
+          <button type="button" class="category-filter-trigger" id="categoryFilter"
+            aria-haspopup="listbox" aria-expanded="false"
+            aria-labelledby="categoryFilterTitle categoryFilterLabel">
+            <span class="category-swatch swatch-all" id="categoryFilterSwatch" aria-hidden="true"></span>
+            <span class="category-filter-label" id="categoryFilterLabel"></span>
+            <svg class="category-select-chevron" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="m5 7.5 5 5 5-5"/>
+            </svg>
+          </button>
+          <div class="category-menu" id="categoryMenu" role="listbox"
+            aria-labelledby="categoryFilterTitle" hidden></div>
+        </div>
+      </div>
       <div id="catalogue-results" class="catalogue-results-anchor" tabindex="-1"></div>
       <div class="catalogue-status">
         <p id="catalogueResults" aria-live="polite"></p>
@@ -74,6 +83,10 @@
           <span data-lang="en">Reset filters</span><span data-lang="th">ล้างตัวกรอง</span>
         </button>
       </div>
+      <p class="wholesale-note catalogue-wholesale-note">
+        <span data-lang="en">* Please reach out directly to discuss wholesale / bulk pricing.</span>
+        <span data-lang="th">* โปรดติดต่อเราโดยตรงเพื่อสอบถามราคาขายส่ง / ราคาสำหรับการสั่งซื้อจำนวนมาก</span>
+      </p>
       <div class="product-grid" id="productGrid"></div>
     </div>
   </section>

@@ -241,13 +241,17 @@ function productSearchText(product) {
 function initShopPage() {
   const grid = document.getElementById("productGrid");
   const categoryFilter = document.getElementById("categoryFilter");
+  const categoryMenu = document.getElementById("categoryMenu");
+  const categoryFilterLabel = document.getElementById("categoryFilterLabel");
+  const categoryFilterSwatch = document.getElementById("categoryFilterSwatch");
   const search = document.getElementById("catalogueSearch");
   const stockFilter = document.getElementById("stockFilter");
   const sort = document.getElementById("sortProducts");
   const results = document.getElementById("catalogueResults");
   const resultsAnchor = document.getElementById("catalogue-results");
   const reset = document.getElementById("resetCatalogue");
-  if (!grid || !categoryFilter || !search || !stockFilter || !sort || !results || !resultsAnchor || !reset) return;
+  if (!grid || !categoryFilter || !categoryMenu || !categoryFilterLabel || !categoryFilterSwatch
+    || !search || !stockFilter || !sort || !results || !resultsAnchor || !reset) return;
 
   const populatedCategories = Object.keys(PRODUCT_CATEGORIES)
     .filter((category) => PRODUCTS.some((product) => product.category === category));
@@ -256,19 +260,60 @@ function initShopPage() {
     ...populatedCategories.map((key) => ({ key, label: PRODUCT_CATEGORIES[key] }))
   ];
 
-  categoryFilter.innerHTML = filterData.map(({ key, label }) => `
-    <option value="${escapeHTML(key)}"
-      data-en="Category: ${escapeHTML(label.en)}"
-      data-th="หมวดหมู่: ${escapeHTML(label.th)}">Category: ${escapeHTML(label.en)}</option>`).join("");
-
   const params = new URLSearchParams(window.location.search);
   let activeCategory = params.get("category") || "all";
   if (!filterData.some((filter) => filter.key === activeCategory)) activeCategory = "all";
-  categoryFilter.value = activeCategory;
+
+  categoryMenu.innerHTML = filterData.map(({ key, label }) => `
+    <button type="button" class="category-option" role="option" tabindex="-1"
+      data-category-option="${escapeHTML(key)}" aria-selected="false"
+      data-aria-en="Choose ${escapeHTML(label.en)} category"
+      data-aria-th="เลือกหมวดหมู่${escapeHTML(label.th)}">
+      <span class="category-swatch swatch-${escapeHTML(key)}" aria-hidden="true"></span>
+      <span data-lang="en">${escapeHTML(label.en)}</span>
+      <span data-lang="th">${escapeHTML(label.th)}</span>
+      <svg class="category-option-check" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-9"/></svg>
+    </button>`).join("");
 
   search.value = params.get("q") || "";
   stockFilter.value = ["available", "sold_out"].includes(params.get("stock")) ? params.get("stock") : "all";
   sort.value = ["name", "price_low", "price_high"].includes(params.get("sort")) ? params.get("sort") : "recommended";
+
+  function updateCategoryControl() {
+    const selected = filterData.find((filter) => filter.key === activeCategory) || filterData[0];
+    categoryFilterLabel.innerHTML = `
+      <span data-lang="en">Category: ${escapeHTML(selected.label.en)}</span>
+      <span data-lang="th">หมวดหมู่: ${escapeHTML(selected.label.th)}</span>`;
+    categoryFilterSwatch.className = `category-swatch swatch-${selected.key}`;
+    categoryMenu.querySelectorAll("[data-category-option]").forEach((option) => {
+      const active = option.dataset.categoryOption === activeCategory;
+      option.classList.toggle("selected", active);
+      option.setAttribute("aria-selected", active ? "true" : "false");
+    });
+  }
+
+  function closeCategoryMenu({ restoreFocus = false } = {}) {
+    categoryMenu.hidden = true;
+    categoryFilter.setAttribute("aria-expanded", "false");
+    if (restoreFocus) categoryFilter.focus();
+  }
+
+  function openCategoryMenu(preferredDirection = 1) {
+    categoryMenu.hidden = false;
+    categoryFilter.setAttribute("aria-expanded", "true");
+    const options = [...categoryMenu.querySelectorAll("[data-category-option]")];
+    const selectedIndex = options.findIndex((option) => option.dataset.categoryOption === activeCategory);
+    const fallbackIndex = preferredDirection < 0 ? options.length - 1 : 0;
+    options[selectedIndex >= 0 ? selectedIndex : fallbackIndex]?.focus();
+  }
+
+  function selectCategory(category, { restoreFocus = true } = {}) {
+    if (!filterData.some((filter) => filter.key === category)) return;
+    activeCategory = category;
+    updateUrl();
+    applyFilter();
+    closeCategoryMenu({ restoreFocus });
+  }
 
   function updateUrl() {
     const url = new URL(window.location);
@@ -302,13 +347,47 @@ function initShopPage() {
     results.textContent = countLabel;
     const hasFilters = activeCategory !== "all" || query || stockFilter.value !== "all" || sort.value !== "recommended";
     reset.hidden = !hasFilters;
-    categoryFilter.value = activeCategory;
+    updateCategoryControl();
   }
 
-  categoryFilter.addEventListener("change", () => {
-    activeCategory = categoryFilter.value;
-    updateUrl();
-    applyFilter();
+  categoryFilter.addEventListener("click", () => {
+    if (categoryMenu.hidden) openCategoryMenu();
+    else closeCategoryMenu();
+  });
+  categoryFilter.addEventListener("keydown", (event) => {
+    if (!["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    if (categoryMenu.hidden) openCategoryMenu(event.key === "ArrowUp" ? -1 : 1);
+  });
+  categoryMenu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-category-option]");
+    if (option) selectCategory(option.dataset.categoryOption);
+  });
+  categoryMenu.addEventListener("keydown", (event) => {
+    const option = event.target.closest("[data-category-option]");
+    if (!option) return;
+    const options = [...categoryMenu.querySelectorAll("[data-category-option]")];
+    const index = options.indexOf(option);
+    if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+      event.preventDefault();
+      let nextIndex = index;
+      if (event.key === "ArrowDown") nextIndex = (index + 1) % options.length;
+      if (event.key === "ArrowUp") nextIndex = (index - 1 + options.length) % options.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = options.length - 1;
+      options[nextIndex].focus();
+    }
+    if (["Enter", " "].includes(event.key)) {
+      event.preventDefault();
+      selectCategory(option.dataset.categoryOption);
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeCategoryMenu({ restoreFocus: true });
+    }
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!categoryMenu.hidden && !event.target.closest(".category-picker")) closeCategoryMenu();
   });
 
   let searchTimer;
@@ -322,7 +401,6 @@ function initShopPage() {
   }));
   reset.addEventListener("click", () => {
     activeCategory = "all";
-    categoryFilter.value = "all";
     search.value = "";
     stockFilter.value = "all";
     sort.value = "recommended";
@@ -446,6 +524,7 @@ function initHomeShowcase() {
       <section class="collection-panel" id="collection-${escapeHTML(product.category)}"
         data-collection-index="${index}" data-collection-category="${escapeHTML(product.category)}"
         aria-labelledby="collection-title-${escapeHTML(product.category)}">
+      <span class="collection-snap-point" aria-hidden="true"></span>
       <a class="hero-showcase-link"
         href="/shop.html?category=${encodeURIComponent(product.category)}#catalogue-results"
         data-aria-en="Browse the ${escapeHTML(category.en)} collection"
@@ -725,6 +804,10 @@ function initProductPage() {
       <h1 data-lang="en">${escapeHTML(product.name.en)}</h1>
       <h1 data-lang="th">${escapeHTML(product.name.th)}</h1>
       <div class="pd-price">฿${product.price.toLocaleString("en-US")}</div>
+      <p class="wholesale-note product-wholesale-note">
+        <span data-lang="en">* Please reach out directly to discuss wholesale / bulk pricing.</span>
+        <span data-lang="th">* โปรดติดต่อเราโดยตรงเพื่อสอบถามราคาขายส่ง / ราคาสำหรับการสั่งซื้อจำนวนมาก</span>
+      </p>
       <p class="stock-status ${escapeHTML(product.stock)}">${bilingualPair(stock)}</p>
 
       <p data-lang="en">${escapeHTML(product.description.en)}</p>

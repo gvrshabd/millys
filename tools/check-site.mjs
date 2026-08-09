@@ -229,6 +229,10 @@ if (!mainScript.includes("INQUIRY_STORAGE_KEY")) {
 if (!mainScript.includes('document.getElementById("categoryFilter")') || mainScript.includes("swatch-pill")) {
   fail("The Shop must use one compact category selector instead of category pills.");
 }
+if (!mainScript.includes('role="option"') || !mainScript.includes("data-category-option")
+  || !mainScript.includes("closeCategoryMenu") || !mainScript.includes("openCategoryMenu")) {
+  fail("The Shop category selector must expose the accessible coloured option menu.");
+}
 if (!mainScript.includes('#catalogue-results') || !mainScript.includes("resultsAnchor.scrollIntoView")) {
   fail("Homepage category links must open the filtered catalogue results directly.");
 }
@@ -237,8 +241,14 @@ const shopPage = read("shop.html");
 if (!shopPage.includes('id="categoryFilter"') || shopPage.includes('id="categoryFilters"')) {
   fail("shop.html is missing the single category-selection bar.");
 }
+if (!shopPage.includes('aria-haspopup="listbox"') || !shopPage.includes('id="categoryMenu"')) {
+  fail("shop.html is missing the accessible pill-style category listbox.");
+}
 if (shopPage.includes("Search the catalogue, compare the options provided for each item")) {
   fail("The unnecessary Shop introduction is still present.");
+}
+if (!shopPage.includes("Please reach out directly to discuss wholesale / bulk pricing.")) {
+  fail("The Shop is missing the wholesale pricing notice.");
 }
 if (!styles.includes(".tag-hole, .tag-name, .tag-options, .new-flag { display: none !important; }")) {
   fail("Mobile catalogue cards must hide all text except price and inquiry action.");
@@ -251,8 +261,13 @@ if (homepage.includes("hero-showcase-arrow")) {
 if (!mainScript.includes('class="collection-panel"') || !mainScript.includes("IntersectionObserver")) {
   fail("The homepage must render vertically stacked panels with visibility-based rail tracking.");
 }
-if (!styles.includes("scroll-snap-type: y proximity") || !styles.includes("scroll-snap-align: start")) {
+if (!mainScript.includes('class="collection-snap-point"')
+  || !styles.includes("scroll-snap-type: y proximity")
+  || !styles.includes("scroll-snap-align: center")) {
   fail("The homepage is missing its natural vertical scroll-snap layout.");
+}
+if (!styles.includes("font-size: 110%") || !styles.includes("margin-bottom: 20px")) {
+  fail("The measured typography increase or mobile homepage copy spacing is missing.");
 }
 
 for (const category of Object.keys(PRODUCT_CATEGORIES)) {
@@ -275,8 +290,24 @@ const header = read("partials/header.html");
 if (!header.includes('data-set-lang="en"') || !header.includes('data-set-lang="th"')) {
   fail("The header is missing one or both language controls.");
 }
-if (!header.includes('class="flag-art"')) {
+if (!header.includes('class="flag-art flag-art-en"') || !header.includes('class="flag-art flag-art-th"')) {
   fail("Language controls must use the compact illustrated flags.");
+}
+if (!header.includes('fill="#1D317E"')) {
+  fail("The English language control is missing the stronger-blue Union Jack artwork.");
+}
+
+const footer = read("partials/footer.html");
+if (!footer.includes('/contact.html#email-contact') || footer.includes("All rights reserved")) {
+  fail("The footer email link or copyright removal is incomplete.");
+}
+
+const contactPage = read("contact.html");
+if (!contactPage.includes("Contact details") || !contactPage.includes('id="email-contact"')) {
+  fail("The Contact details heading or email anchor is missing.");
+}
+if (!mainScript.includes("Please reach out directly to discuss wholesale / bulk pricing.")) {
+  fail("Product detail pages are missing the wholesale pricing notice.");
 }
 
 const sitemap = read("sitemap.xml");
