@@ -31,3 +31,9 @@ reports
 reports/**
 exports
 exports/**
+CREATE_MILLYS_BACKUP.cmd
+*.ps1
+backups
+backups/**
+*.millys-backup.zip
+*.millys-backup.zip.sha256.txt

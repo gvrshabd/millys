@@ -76,7 +76,7 @@
           </select>
         </label>
         <button type="button" class="admin-button primary" id="addProduct">Add product</button>
-        <button type="button" class="admin-button" id="exportCatalogue">Export backup</button>
+        <button type="button" class="admin-button" id="exportCatalogue">Download catalogue backup</button>
       </div>
 
       <div class="bulk-bar" id="bulkBar" hidden>
@@ -126,7 +126,14 @@
         <li>Preview the customer view and publish only when everything is ready.</li>
         <li>Archive products that should disappear without deleting their history.</li>
       </ol>
-      <p>For backup and recovery instructions, see the owner management guide in the repository.</p>
+      <p>The catalogue download protects product records and change history. A complete website recovery package also includes the committed code, D1 database and every managed R2 photograph.</p>
+
+      <details class="import-panel">
+        <summary>Complete website backup for Google Drive</summary>
+        <p>On the computer containing the Milly's repository, double-click <strong>CREATE_MILLYS_BACKUP.cmd</strong>. Choose a folder inside Google Drive when prompted. One dated ZIP and its SHA-256 verification file will be created there.</p>
+        <p>The complete package contains the committed website source, full Git history, the live D1 database, managed R2 photographs, checksums and restoration instructions. It deliberately contains no passwords, Access cookies, API tokens or Worker secrets.</p>
+        <p>If Google Drive for desktop is not installed, create the package in a normal folder and upload both generated files to a private Google Drive folder. Keep sharing set to <strong>Restricted</strong>.</p>
+      </details>
 
       <details class="import-panel">
         <summary>Grant or revoke administrator access</summary>

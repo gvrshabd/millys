@@ -113,9 +113,20 @@ live customer product.
 
 ## Export a backup
 
-Select **Export backup** on the Products dashboard. Keep the downloaded JSON
+Select **Download catalogue backup** on the Products dashboard. Keep the downloaded JSON
 file in an owner-controlled location. It contains catalogue and change-history
 data but no passwords, Access tokens or Cloudflare credentials.
+
+For a complete disaster-recovery copy, double-click
+`CREATE_MILLYS_BACKUP.cmd` on the authorized computer and choose a private
+Google Drive folder. The dated ZIP adds the committed source, full Git history,
+complete live D1 SQL export, managed R2 photographs, manifest, checksums and
+restoration guide. Keep the adjacent SHA-256 file with it.
+
+The complete backup deliberately does not contain passwords, Cloudflare API
+tokens, Access sessions, one-time codes, Worker secrets or Google credentials.
+Keep Drive sharing set to **Restricted**. Full instructions are in
+`BACKUP_AND_RESTORE.md`.
 
 ## Emergency JSON import
 

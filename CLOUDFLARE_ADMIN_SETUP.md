@@ -196,13 +196,27 @@ application's 5 GiB accounting ceiling.
 
 ### Application backup
 
-Use **Export backup** in Administration before migrations, bulk imports and
+Use **Download catalogue backup** in Administration before migrations, bulk imports and
 large editing sessions. Store JSON exports somewhere owner-controlled and
 outside the repository.
 
 Imports are admin-only, validation-first and draft-only. Applying an import
 requires a preview digest and exact typed confirmation. Published products are
 not overwritten by an import.
+
+### Complete recovery package
+
+Run `CREATE_MILLYS_BACKUP.cmd` from an authorized Windows checkout for a dated,
+Google Drive-ready archive. The underlying `tools/create-recovery-backup.ps1`
+creates a committed source snapshot, full Git bundle, production D1 SQL export,
+and a verified copy of every R2 object registered in `product_media`. It writes
+per-file checksums, a manifest, a restoration guide and a SHA-256 sidecar for
+the finished ZIP.
+
+The process is read-only against Cloudflare. It never stores Cloudflare or
+Google credentials in Git or in the archive. Select a private Google Drive for
+desktop folder, or upload the generated ZIP and sidecar manually. Keep Drive
+sharing restricted. See `BACKUP_AND_RESTORE.md` before any restore.
 
 ### Restore a product
 

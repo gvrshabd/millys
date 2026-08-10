@@ -7,3 +7,6 @@ catalogue-import-report.json
 catalogue-export*.json
 reports/
 exports/
+backups/
+*.millys-backup.zip
+*.millys-backup.zip.sha256.txt
