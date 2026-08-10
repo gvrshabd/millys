@@ -5,6 +5,14 @@ export const MAX_MEDIA_BYTES = 2 * 1024 * 1024;
 export const MAX_MANAGED_MEDIA_BYTES = 5 * 1024 * 1024 * 1024;
 export const MAX_MANAGED_MEDIA_OBJECTS = 10_000;
 
+function etagMatches(value, expected) {
+  const normalized = String(expected || "").replace(/^W\//i, "");
+  return String(value || "").split(",").some((candidate) => {
+    const tag = candidate.trim();
+    return tag === "*" || tag.replace(/^W\//i, "") === normalized;
+  });
+}
+
 function ascii(bytes, start, length) {
   return String.fromCharCode(...bytes.slice(start, start + length));
 }
@@ -144,7 +152,7 @@ export async function serveMedia(request, bucket, keyInput, ctx = {}) {
   if (cache) {
     const cached = await cache.match(cacheKey);
     if (cached) {
-      if (request.headers.get("If-None-Match") === cached.headers.get("ETag")) {
+      if (etagMatches(request.headers.get("If-None-Match"), cached.headers.get("ETag"))) {
         return new Response(null, { status: 304, headers: cached.headers });
       }
       return request.method === "HEAD"
@@ -160,7 +168,7 @@ export async function serveMedia(request, bucket, keyInput, ctx = {}) {
     ETag: object.httpEtag || object.etag || ""
   });
   object.writeHttpMetadata?.(headers);
-  if (request.headers.get("If-None-Match") === headers.get("ETag")) {
+  if (etagMatches(request.headers.get("If-None-Match"), headers.get("ETag"))) {
     return new Response(null, { status: 304, headers });
   }
   const response = new Response(request.method === "HEAD" ? null : object.body, { headers });

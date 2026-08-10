@@ -66,6 +66,11 @@ test("R2 photographs are reused from edge cache", async () => {
     const second = await serveMedia(request, bucket, "products/product_abc/test.webp");
     assert.equal(second.status, 200);
     assert.equal(reads, 1);
+    const conditional = await serveMedia(new Request(request, {
+      headers: { "If-None-Match": 'W/"test-etag"' }
+    }), bucket, "products/product_abc/test.webp");
+    assert.equal(conditional.status, 304);
+    assert.equal(reads, 1);
   } finally {
     if (original) Object.defineProperty(globalThis, "caches", original);
     else delete globalThis.caches;

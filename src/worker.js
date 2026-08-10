@@ -110,6 +110,14 @@ function scheduleCacheDelete(request, ctx) {
   if (typeof ctx?.waitUntil === "function") ctx.waitUntil(promise);
 }
 
+function etagMatches(value, expected) {
+  const normalized = String(expected || "").replace(/^W\//i, "");
+  return String(value || "").split(",").some((candidate) => {
+    const tag = candidate.trim();
+    return tag === "*" || tag.replace(/^W\//i, "") === normalized;
+  });
+}
+
 async function publicCatalogueResponse(request, env, ctx) {
   if (request.method !== "GET") return methodNotAllowed(["GET"]);
   const cacheKey = new Request(`${new URL(request.url).origin}/api/catalogue`, { method: "GET" });
@@ -117,7 +125,7 @@ async function publicCatalogueResponse(request, env, ctx) {
   if (cache) {
     const cached = await cache.match(cacheKey);
     if (cached) {
-      if (request.headers.get("If-None-Match") === cached.headers.get("ETag")) {
+      if (etagMatches(request.headers.get("If-None-Match"), cached.headers.get("ETag"))) {
         return new Response(null, { status: 304, headers: cached.headers });
       }
       return cached;
@@ -125,7 +133,7 @@ async function publicCatalogueResponse(request, env, ctx) {
   }
   const catalogue = await getPublicCatalogue(env.DB);
   const etag = `"millys-${catalogue.version}"`;
-  if (request.headers.get("If-None-Match") === etag) {
+  if (etagMatches(request.headers.get("If-None-Match"), etag)) {
     return new Response(null, { status: 304, headers: { ETag: etag } });
   }
   const seconds = Math.max(0, Math.min(300, Number(env.PUBLIC_CATALOGUE_CACHE_SECONDS || 60)));

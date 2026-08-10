@@ -19,7 +19,7 @@ test("public catalogue exposes only published snapshots and supports ETags", asy
     assert.equal(JSON.stringify(body).includes("administrator"), false);
     assert.equal(JSON.stringify(body).includes("draft_json"), false);
     const cached = await handleRequest(new Request("https://millys.example/api/catalogue", {
-      headers: { "If-None-Match": response.headers.get("ETag") }
+      headers: { "If-None-Match": `W/${response.headers.get("ETag")}` }
     }), { DB: db });
     assert.equal(cached.status, 304);
   } finally { db.close(); }
