@@ -147,7 +147,6 @@ const expectedPages = new Set([
   "index.html",
   "shop.html",
   "product.html",
-  "about.html",
   "contact.html",
   "catalogue-print.html"
 ]);
@@ -161,6 +160,9 @@ if (fs.existsSync(path.join(root, "size-guide.html"))) {
 if (fs.existsSync(path.join(root, "delivery-exchange.html"))) {
   fail("delivery-exchange.html should not exist.");
 }
+if (fs.existsSync(path.join(root, "about.html"))) {
+  fail("about.html should not exist.");
+}
 
 const bannedText = [
   "hello@millys.example",
@@ -169,6 +171,7 @@ const bannedText = [
   "Bilingual site",
   "TH / EN",
   "/delivery-exchange.html",
+  "/about.html",
   "Delivery &amp; Exchange",
   "including size help and order questions",
   "56, 24 Ratchadaphisek 16 Alley",

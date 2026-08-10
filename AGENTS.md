@@ -14,7 +14,7 @@ Rules for anyone (human or AI) making changes to this project:
 10. **No separate size guide.** Product-specific fit and measurement information belongs on each product page.
 
 ## Structure
-- `index.html`, `shop.html`, `product.html`, `about.html`, `contact.html`, `catalogue-print.html` — pages
+- `index.html`, `shop.html`, `product.html`, `contact.html`, `catalogue-print.html` — pages
 - `partials/header.html`, `partials/footer.html` — shared nav/footer, injected by `js/main.js`
 - `js/site-config.js` — business details, website settings and shop-wide marketplace links
 - `js/products.js` — the product database (edit here to add/remove/change products)

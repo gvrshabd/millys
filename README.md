@@ -66,7 +66,6 @@ Console.
 index.html
 shop.html
 product.html
-about.html
 contact.html
 robots.txt
 sitemap.xml

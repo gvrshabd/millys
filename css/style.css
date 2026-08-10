@@ -1462,7 +1462,7 @@ html.home-scroll-page {
   gap: 28px;
   margin-bottom: 28px;
 }
-@media (min-width: 700px) { .footer-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 700px) { .footer-grid { grid-template-columns: repeat(3, 1fr); } }
 .footer-grid h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); font-weight: 500; color: var(--ink); }
 .footer-grid a, .footer-grid p { display: block; font-size: 0.85rem; margin-bottom: 8px; color: var(--taupe); }
 .footer-grid a:hover { color: var(--rose-deep); }
