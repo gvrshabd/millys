@@ -17,6 +17,7 @@ package-lock.json
 pnpm-lock.yaml
 pnpm-workspace.yaml
 .npmrc
+.gitignore
 wrangler.jsonc
 .wrangler-config
 .wrangler-config/**
@@ -26,3 +27,7 @@ wrangler.jsonc
 .env.*
 catalogue-import-report.json
 catalogue-export*.json
+reports
+reports/**
+exports
+exports/**

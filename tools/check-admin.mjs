@@ -10,7 +10,10 @@ for (const file of required) {
 }
 
 const assetsIgnore = fs.readFileSync(".assetsignore", "utf8");
-for (const privatePath of ["**/.git", "src/**", "migrations/**", "tests/**", "tools/**", "wrangler.jsonc", ".dev.vars.*"]) {
+for (const privatePath of [
+  "**/.git", ".gitignore", "src/**", "migrations/**", "tests/**", "tools/**",
+  "wrangler.jsonc", ".dev.vars.*", "reports/**", "exports/**"
+]) {
   if (!assetsIgnore.includes(privatePath)) throw new Error(`.assetsignore must exclude ${privatePath}`);
 }
 
