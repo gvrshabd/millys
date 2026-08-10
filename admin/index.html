@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milly's Administration</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<div class="admin-loading" id="adminLoading" role="status">Verifying your administrator session…</div>
+
+<div class="admin-app" id="adminApp" hidden>
+  <header class="admin-header">
+    <div>
+      <p class="admin-eyebrow">Private catalogue workspace</p>
+      <h1>Milly's Administration</h1>
+    </div>
+    <div class="admin-identity">
+      <span id="adminEmail"></span>
+      <a href="/cdn-cgi/access/logout" class="admin-link">Sign out</a>
+    </div>
+  </header>
+
+  <nav class="admin-tabs" aria-label="Administration sections">
+    <button type="button" class="admin-tab active" data-admin-view="products">Products</button>
+    <button type="button" class="admin-tab" data-admin-view="audit">History</button>
+    <button type="button" class="admin-tab" data-admin-view="help">Help</button>
+  </nav>
+
+  <main>
+    <section class="admin-view" id="productsView">
+      <div class="stat-grid" id="adminStats" aria-label="Catalogue summary"></div>
+
+      <section class="recent-panel" aria-labelledby="recentHeading">
+        <div><p class="admin-eyebrow">Recorded automatically</p><h2 id="recentHeading">Recent changes</h2></div>
+        <div class="recent-list" id="recentActivity" aria-live="polite"></div>
+      </section>
+
+      <div class="admin-toolbar">
+        <label class="admin-search">
+          <span>Search products</span>
+          <input id="adminSearch" type="search" placeholder="Name or product code" autocomplete="off">
+        </label>
+        <label>
+          <span>Category</span>
+          <select id="adminCategoryFilter">
+            <option value="">All categories</option>
+            <option value="dresses">Dresses</option>
+            <option value="kaftans">Kaftans</option>
+            <option value="tops">Tops</option>
+            <option value="sets">Sets</option>
+            <option value="bags">Bags</option>
+            <option value="pants">Pants</option>
+            <option value="skirts">Skirts</option>
+          </select>
+        </label>
+        <label>
+          <span>Stock</span>
+          <select id="adminStockFilter">
+            <option value="">All stock</option>
+            <option value="in_stock">In stock</option>
+            <option value="low_stock">Low stock</option>
+            <option value="sold_out">Sold out</option>
+          </select>
+        </label>
+        <label>
+          <span>State</span>
+          <select id="adminStateFilter">
+            <option value="">All states</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft only</option>
+            <option value="archived">Archived</option>
+          </select>
+        </label>
+        <button type="button" class="admin-button primary" id="addProduct">Add product</button>
+        <button type="button" class="admin-button" id="exportCatalogue">Export backup</button>
+      </div>
+
+      <div class="bulk-bar" id="bulkBar" hidden>
+        <strong><span id="bulkCount">0</span> selected</strong>
+        <label>
+          <span class="sr-only">Bulk stock status</span>
+          <select id="bulkStock">
+            <option value="">Choose stock status</option>
+            <option value="in_stock">In stock</option>
+            <option value="low_stock">Low stock</option>
+            <option value="sold_out">Sold out</option>
+          </select>
+        </label>
+        <button type="button" class="admin-button" id="applyBulkStock">Apply to selected</button>
+        <button type="button" class="admin-text-button" id="clearSelection">Clear</button>
+      </div>
+
+      <div class="product-list-heading">
+        <label class="select-all-label">
+          <input type="checkbox" id="selectAllProducts">
+          <span>Select all shown</span>
+        </label>
+        <span id="adminProductCount" aria-live="polite"></span>
+      </div>
+      <div class="admin-product-list" id="adminProductList"></div>
+    </section>
+
+    <section class="admin-view" id="auditView" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="admin-eyebrow">Recorded automatically</p>
+          <h2>Change history</h2>
+        </div>
+        <button type="button" class="admin-button" id="refreshAudit">Refresh</button>
+      </div>
+      <div class="audit-list" id="auditList"></div>
+    </section>
+
+    <section class="admin-view admin-help" id="helpView" hidden>
+      <p class="admin-eyebrow">Everyday workflow</p>
+      <h2>How to manage the catalogue</h2>
+      <ol>
+        <li>Use the stock menu beside a product for immediate availability changes.</li>
+        <li>Choose <strong>Add product</strong> to create an unpublished draft.</li>
+        <li>Complete English and Thai information, then save the draft.</li>
+        <li>Upload and arrange photographs after the first draft save.</li>
+        <li>Preview the customer view and publish only when everything is ready.</li>
+        <li>Archive products that should disappear without deleting their history.</li>
+      </ol>
+      <p>For backup and recovery instructions, see the owner management guide in the repository.</p>
+
+      <details class="import-panel">
+        <summary>Grant or revoke administrator access</summary>
+        <p>Administrator access is deliberately controlled in Cloudflare rather than from this website. This prevents an administrator session from quietly granting access to another person.</p>
+        <ol>
+          <li>Add or remove the exact email address in the Milly's Cloudflare Access Allow policy.</li>
+          <li>Update the Worker's protected <strong>ADMIN_EMAILS</strong> value with the complete comma-separated list of approved addresses.</li>
+          <li>Test the changed email in a private browser window. Keep the previous administrator signed in until the test succeeds.</li>
+        </ol>
+        <p>Both controls must agree. Ask the technical maintainer to perform these steps; never send passwords, one-time codes or Cloudflare tokens.</p>
+      </details>
+
+      <details class="import-panel">
+        <summary>Emergency JSON import</summary>
+        <p>This restores products into private drafts only. It never changes the customer catalogue until each draft is reviewed and published.</p>
+        <label>Catalogue backup file
+          <input type="file" id="importFile" accept="application/json,.json">
+        </label>
+        <button type="button" class="admin-button" id="previewImport">Validate and preview</button>
+        <div class="import-preview" id="importPreview" hidden>
+          <div id="importSummary" role="status"></div>
+          <label>Type the exact confirmation shown above
+            <input id="importConfirmation" autocomplete="off">
+          </label>
+          <button type="button" class="admin-button danger-button" id="applyImport">Apply to private drafts</button>
+        </div>
+      </details>
+    </section>
+  </main>
+</div>
+
+<dialog class="editor-dialog" id="productEditor">
+  <form method="dialog" class="editor-shell" id="productForm" novalidate>
+    <header class="editor-header">
+      <div>
+        <p class="admin-eyebrow" id="editorStateLabel">Draft product</p>
+        <h2 id="editorTitle">Add product</h2>
+        <p class="editor-revision" id="editorRevision"></p>
+      </div>
+      <button type="button" class="icon-button" id="closeEditor" aria-label="Close product editor">×</button>
+    </header>
+
+    <div class="editor-content">
+      <div class="form-error" id="editorError" role="alert" hidden></div>
+
+      <fieldset>
+        <legend>Basic information</legend>
+        <div class="form-grid three">
+          <label>Product code<input name="code" required maxlength="80" pattern="[A-Z0-9-]+"></label>
+          <label>Category
+            <select name="category" required>
+              <option value="dresses">Dresses</option><option value="kaftans">Kaftans</option>
+              <option value="tops">Tops</option><option value="sets">Sets</option>
+              <option value="bags">Bags</option><option value="pants">Pants</option>
+              <option value="skirts">Skirts</option>
+            </select>
+          </label>
+          <label>Price (THB)<input name="price" type="number" min="0" step="1" required></label>
+          <label>Stock
+            <select name="stock" required>
+              <option value="in_stock">In stock</option>
+              <option value="low_stock">Low stock</option>
+              <option value="sold_out">Sold out</option>
+            </select>
+          </label>
+          <label class="check-label"><input name="is_new" type="checkbox"> Mark as new</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Product names</legend>
+        <div class="form-grid two">
+          <label>English name<input name="name_en" maxlength="500"></label>
+          <label>Thai name<input name="name_th" maxlength="500" lang="th"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Descriptions and fabric</legend>
+        <div class="form-grid two">
+          <label>English description<textarea name="description_en" rows="5"></textarea></label>
+          <label>Thai description<textarea name="description_th" rows="5" lang="th"></textarea></label>
+          <label>English fabric<textarea name="fabric_en" rows="3"></textarea></label>
+          <label>Thai fabric<textarea name="fabric_th" rows="3" lang="th"></textarea></label>
+          <label>English care information<textarea name="care_en" rows="3"></textarea></label>
+          <label>Thai care information<textarea name="care_th" rows="3" lang="th"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Colours</legend>
+        <div id="colourRows" class="repeat-list"></div>
+        <button type="button" class="admin-button" data-add-row="colour">Add colour</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Measurements</legend>
+        <div id="measurementRows" class="repeat-list"></div>
+        <button type="button" class="admin-button" data-add-row="measurement">Add measurement</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Optional size and colour availability</legend>
+        <p class="field-note">Leave empty when exact combinations have not been confirmed.</p>
+        <div id="variantRows" class="repeat-list"></div>
+        <button type="button" class="admin-button" data-add-row="variant">Add variant</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Photographs</legend>
+        <p class="field-note">The first photograph is the main catalogue image. Save a new draft once before uploading.</p>
+        <div id="imageRows" class="image-manager" aria-label="Product photographs. Drag to reorder or use the arrow buttons."></div>
+        <div class="upload-panel">
+          <label>Photograph<input type="file" id="mediaFile" accept="image/jpeg,image/png,image/webp"></label>
+          <div class="form-grid two">
+            <label>English alternative text<input id="mediaAltEn" maxlength="500"></label>
+            <label>Thai alternative text<input id="mediaAltTh" maxlength="500" lang="th"></label>
+          </div>
+          <button type="button" class="admin-button" id="uploadMedia">Upload photograph</button>
+          <progress id="uploadProgress" max="100" value="0" hidden></progress>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Marketplace links</legend>
+        <div class="form-grid two">
+          <label>LINE URL<input name="link_line" type="url" placeholder="https://"></label>
+          <label>TikTok Shop URL<input name="link_tiktok" type="url" placeholder="https://"></label>
+          <label>Shopee URL<input name="link_shopee" type="url" placeholder="https://"></label>
+          <label>Lazada URL<input name="link_lazada" type="url" placeholder="https://"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Homepage showcase</legend>
+        <label class="check-label"><input name="showcase_enabled" type="checkbox"> Feature this product for its category</label>
+        <div class="form-grid three">
+          <label>Photograph number<input name="showcase_image" type="number" min="1" step="1" value="1"></label>
+          <label>English feature name<input name="showcase_name_en" maxlength="300"></label>
+          <label>Thai feature name<input name="showcase_name_th" maxlength="300" lang="th"></label>
+          <label>Optional hero video path<input name="showcase_video" maxlength="1000"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Optional product video</legend>
+        <div class="form-grid two">
+          <label>Video path<input name="video_src" maxlength="1000"></label>
+          <label>Poster image path<input name="video_poster" maxlength="1000"></label>
+        </div>
+      </fieldset>
+
+      <section class="revision-panel" id="revisionPanel" hidden>
+        <h3>Previous versions</h3>
+        <div id="revisionList"></div>
+      </section>
+    </div>
+
+    <footer class="editor-actions">
+      <button type="button" class="admin-text-button danger" id="archiveProduct" hidden>Archive</button>
+      <button type="button" class="admin-button" id="restoreProduct" hidden>Restore</button>
+      <span class="action-spacer"></span>
+      <button type="button" class="admin-button" id="previewProduct">Preview</button>
+      <button type="button" class="admin-button" id="saveDraft">Save draft</button>
+      <button type="button" class="admin-button primary" id="publishProduct">Publish</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog class="preview-dialog" id="productPreview">
+  <div class="preview-shell">
+    <button type="button" class="icon-button preview-close" id="closePreview" aria-label="Close preview">×</button>
+    <div id="previewContent"></div>
+  </div>
+</dialog>
+
+<div class="admin-toast" id="adminToast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

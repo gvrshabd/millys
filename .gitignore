@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.wrangler-config/
+.dev.vars
+.env
+catalogue-import-report.json
+catalogue-export*.json
+reports/
+exports/

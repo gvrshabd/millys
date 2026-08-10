@@ -1,0 +1,18 @@
+{
+  "name": "millys-catalogue",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "check": "node tools/check-site.mjs && node tools/check-admin.mjs",
+    "seed": "node tools/generate-catalogue-seed.mjs",
+    "test": "node --test tests/catalogue-integrity.test.mjs tests/repository-workflow.test.mjs tests/security.test.mjs tests/validation-media.test.mjs tests/worker-security.test.mjs",
+    "test:browser": "node tools/browser-regression.mjs",
+    "dev": "wrangler dev --persist-to ../.millys-wrangler-state",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.0",
+    "wrangler": "^4.0.0"
+  }
+}

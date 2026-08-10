@@ -1,81 +1,88 @@
-# Milly's Garment Website
+# Milly's Garment Catalogue
 
-A mobile-first Thai-English catalogue website for Milly's. Customers browse
-garments here and complete orders through LINE, TikTok Shop, Shopee, or Lazada.
-The website does not collect payments and has no customer accounts.
+A mobile-first English–Thai catalogue for Milly's. Customers browse 110
+products, save products to an inquiry basket, and continue through LINE,
+TikTok Shop, Shopee, Lazada or email. The site has no checkout, payments or
+customer accounts.
 
-## Current status
+## Customer pages
 
-The website is in pre-launch development:
+- Seven-section vertical collection homepage
+- Shop search, filters and category selection
+- Product details, galleries and measurements
+- Inquiry basket and printable/PDF selected catalogue
+- Contact page
 
-- Search indexing is disabled.
-- The `main` branch is the Cloudflare production branch.
-- Work should happen on review branches and only merge after owner approval.
-- Six sample products remain placeholders until real product information and
-  media are supplied.
-- Delivery, exchange, and About content still need owner confirmation.
+The About and Delivery & Exchange pages have been intentionally removed.
 
-## Pages
+## Catalogue administration
 
-- Home
-- Shop and category filters
-- Product details with product-specific measurements
-- Delivery & Exchange
-- About
-- Contact
+The private `/admin/` application supports stock updates, bulk stock changes,
+bilingual drafts, customer-style preview, publish/archive/restore, R2 photo
+uploads, revision history, audit history and JSON backups.
 
-There is no separate size-guide page. Fit and measurement information belongs
-on each product.
+Production architecture:
 
-## Owner-editable files
+- Cloudflare Access: administrator sign-in
+- Cloudflare Worker: public catalogue, protected API and media route
+- Cloudflare D1: authoritative draft/published product data
+- Cloudflare R2: future admin-uploaded photographs
+- Workers Assets: existing static customer website and legacy photographs
 
-- `js/products.js` - products, stock, prices, translations, images, videos, and
-  product-specific order links
-- `js/site-config.js` - business details, site address, pre-launch status, and
-  shop-wide marketplace links, plus optional Analytics/Search Console IDs
-- `PRODUCT_MANAGEMENT.md` - step-by-step instructions for routine updates
+The Worker fails closed until its Access settings, exact administrator
+allowlist and CSRF secret are configured. There is no customer-facing Admin
+link.
 
-## Preview locally
+See:
 
-Serve the project folder through a local web server. One option is:
+- `PRODUCT_MANAGEMENT.md` for owner instructions
+- `CLOUDFLARE_ADMIN_SETUP.md` for setup, deployment and recovery
 
-```text
-python -m http.server 8080
-```
+## Development
 
-Then open `http://localhost:8080`.
-
-Opening the HTML files directly will not load the shared header and footer
-because browsers block local partial requests.
-
-## Pre-launch search controls
-
-Until the owner approves public launch:
-
-- `SITE_CONFIG.prelaunch` must remain `true`.
-- Every page must keep `noindex, nofollow`.
-- `robots.txt` must keep `Disallow: /`.
-
-At launch, update these controls together, confirm the final domain in
-`js/site-config.js` and `sitemap.xml`, then submit the sitemap to Google Search
-Console.
-
-## Structure
+Requires Node.js 22+ and pnpm.
 
 ```text
-index.html
-shop.html
-product.html
-contact.html
-robots.txt
-sitemap.xml
-PRODUCT_MANAGEMENT.md
-css/style.css
-js/site-config.js
-js/products.js
-js/main.js
-partials/header.html
-partials/footer.html
-images/products/
-tools/check-site.mjs
+pnpm install
+pnpm seed
+npx wrangler d1 migrations apply millys-catalogue --local --persist-to ../.millys-wrangler-state
+pnpm check
+pnpm test
+pnpm test:browser
+pnpm dev
 ```
+
+Copy `.dev.vars.example` to `.dev.vars` for local protected-route testing.
+Never commit `.dev.vars` or real credentials.
+
+## Main structure
+
+```text
+admin/                       private owner interface
+css/style.css                customer styling
+images/                      existing static photographs
+js/main.js                   customer rendering and catalogue fallback
+js/products.js               emergency initial-catalogue snapshot
+js/site-config.js            business-wide settings and links
+migrations/                  versioned D1 schema and 110-product seed
+src/worker.js                Worker routing and APIs
+src/security.js              Access JWT, allowlist and CSRF verification
+src/repository.js            D1 workflows, revisions and audit
+src/media.js                 R2 uploads and controlled reads
+tests/                       data, workflow and security tests
+tools/                       validator, seed and browser regression tools
+```
+
+## Pre-launch
+
+Search indexing remains disabled until the owner separately approves launch:
+
+- `SITE_CONFIG.prelaunch` stays `true`.
+- Pages retain `noindex, nofollow`.
+- `robots.txt` retains `Disallow: /`.
+
+## Production warning
+
+The repository configuration intentionally contains invalid placeholders until
+the production D1 database and Cloudflare Access application exist. Do not push
+or deploy the admin Worker until `CLOUDFLARE_ADMIN_SETUP.md` is complete.

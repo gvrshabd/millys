@@ -18,6 +18,52 @@ const ORDER_CHANNELS = [
 ];
 
 const INQUIRY_STORAGE_KEY = "milly_inquiry_v1";
+const CATALOGUE_CACHE_KEY = "milly_catalogue_last_good_v1";
+
+function isUsableCatalogue(value) {
+  if (!value || !Array.isArray(value.products) || !value.products.length) return false;
+  const codes = new Set();
+  return value.products.every((product) => {
+    if (!product || typeof product !== "object" || typeof product.code !== "string"
+      || typeof product.category !== "string" || !product.name?.en || !product.name?.th
+      || !Array.isArray(product.images) || !product.images.length || codes.has(product.code)) return false;
+    codes.add(product.code);
+    return true;
+  });
+}
+
+async function loadPublishedCatalogue() {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 3500);
+  try {
+    const response = await fetch("/api/catalogue", {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+      credentials: "same-origin"
+    });
+    if (!response.ok) throw new Error(`Catalogue request failed (${response.status}).`);
+    const catalogue = await response.json();
+    if (!isUsableCatalogue(catalogue)) throw new Error("Catalogue response was incomplete.");
+    PRODUCTS.splice(0, PRODUCTS.length, ...catalogue.products);
+    storageSet(sessionStorage, CATALOGUE_CACHE_KEY, JSON.stringify(catalogue));
+    document.documentElement.dataset.catalogueSource = "published";
+  } catch (error) {
+    try {
+      const cached = JSON.parse(storageGet(sessionStorage, CATALOGUE_CACHE_KEY, "null"));
+      if (isUsableCatalogue(cached)) {
+        PRODUCTS.splice(0, PRODUCTS.length, ...cached.products);
+        document.documentElement.dataset.catalogueSource = "cached";
+        return;
+      }
+    } catch {
+      // The bundled catalogue below remains the final, offline-safe fallback.
+    }
+    document.documentElement.dataset.catalogueSource = "bundled";
+    console.info("Using the bundled Milly's catalogue while live catalogue data is unavailable.", error);
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
 
 function storageGet(storage, key, fallback = null) {
   try {
@@ -1434,9 +1480,11 @@ async function initLayout() {
   updateInquiryUI();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initSEO();
   initAnalytics();
+  const layoutPromise = initLayout();
+  await loadPublishedCatalogue();
   initHomeShowcase();
   initShopPage();
   initProductPage();
@@ -1445,7 +1493,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initInquiry();
   initPrintCatalogue();
 
-  initLayout().then(() => {
-    setLang(getLang());
-  });
+  await layoutPromise;
+  setLang(getLang());
 });

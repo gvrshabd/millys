@@ -1,263 +1,208 @@
-# Managing Products and Stock
+# Milly's Catalogue Administration Guide
 
-You do not need Codex for routine product or stock changes. Product information
-lives in one file:
+Routine product work is done in the private administration page—not in GitHub
+and not by editing code.
 
-`js/products.js`
+Administration address:
 
-Product codes are internal identifiers. They are required in the data file and
-page URL, but are not displayed in the customer-facing catalogue or product
-details.
+`https://millys.deluxejahseh.workers.dev/admin/`
 
-Business contact details and shop-wide marketplace links live in:
+Only email addresses approved in both Cloudflare Access and the Worker's
+administrator allowlist can enter. There is deliberately no Admin link on the
+customer website.
 
-`js/site-config.js`
+## Sign in
 
-Google Analytics and Search Console fields are also in `js/site-config.js`. They
-can remain empty until those accounts are created.
+1. Open the administration address.
+2. Enter your approved email address in the Cloudflare sign-in screen.
+3. Complete the email one-time PIN or the identity method chosen by the owner.
+4. The dashboard opens with totals for published, draft, low-stock, sold-out
+   and archived products, plus recent changes.
 
-## Important: prepare changes carefully
+Never forward a one-time PIN. Milly's staff will never need an Access token,
+Cloudflare API key or GitHub token to manage products.
 
-Cloudflare publishes `main`, and the current Workers integration has also been
-observed building other pushed branches. Do not assume that a GitHub branch is
-a private preview. Prepare and check unfinished product data locally before
-pushing it to GitHub.
+## Change one product's stock
 
-For an organized review history:
+1. Search for the product by its name or code.
+2. Use the Stock menu beside that product.
+3. Choose **In stock**, **Low stock** or **Sold out**.
+4. Wait for the success message.
 
-1. Open the `gvrshabd/millys` repository on GitHub.
-2. Open the branch menu that currently says `main`.
-3. Type a short branch name, such as `content/new-dresses-july`.
-4. Choose **Create branch from main**.
-5. Make and commit your edits on that branch.
-6. Review the branch before opening and merging a pull request.
+For a published product, this is an immediate live change. Newly loaded
+customer pages normally receive it immediately and no later than the short
+catalogue cache period (about 60 seconds). The success message offers a brief
+Undo action.
 
-Only merge into `main` when the product is ready to become the official
-production version.
+## Change stock for several products
 
-## Change stock status
+1. Tick the products to change.
+2. Choose a stock state in the selection bar.
+3. Select **Apply to selected**.
+4. Review and accept the confirmation.
 
-1. Open `js/products.js`.
-2. Find the product by its `code`, such as `MLY-DR-001`.
-3. Find its `stock` line.
-4. Use exactly one of these values:
+The change is applied as one operation. If any selected product changed in
+another session, the whole action is rejected rather than partly applied.
 
-```js
-stock: "in_stock"
-stock: "low_stock"
-stock: "sold_out"
-```
+## Add a product
 
-5. Commit the change to your content branch.
+1. Select **Add product**.
+2. Check the suggested product code and replace it if the confirmed code is
+   different. Product codes must be unique.
+3. Enter the product category, price and stock.
+4. Enter the English and Thai names, descriptions, fabric and care information.
+5. Add colours and measurements in both languages.
+6. Add optional size/colour combinations only when they are confirmed.
+7. Add product-specific marketplace links when available.
+8. Select **Save draft**.
 
-Sold-out products remain visible in the catalogue, but their order buttons are
-disabled. This helps customers identify an item while preventing an accidental
-order attempt.
+A new product begins as a private draft. Saving it does not put it on the
+customer website.
 
-## Add product photographs
+## Upload and arrange photographs
 
-1. Prepare web-sized JPG, PNG, WebP, or AVIF files.
-2. Use simple lowercase filenames without spaces, for example:
-   `mly-dr-004-front.webp`.
-3. In GitHub, open the `images/products` folder and choose
-   **Add file > Upload files**.
-4. Add each image to the product's `images` list:
+1. Save a new product once so it has a draft record.
+2. In **Photographs**, choose a JPEG, PNG or WebP image.
+3. Enter useful English and Thai alternative text.
+4. Select **Upload photograph**.
+5. Drag photographs into order, or use the up/down arrow buttons.
 
-```js
-images: [
-  {
-    src: "products/mly-dr-004-front.webp",
-    alt: {
-      en: "Front view of the blue wrap dress",
-      th: "ภาพด้านหน้าของเดรสห่อคลุมสีน้ำเงิน"
-    }
-  },
-  {
-    src: "products/mly-dr-004-back.webp",
-    alt: {
-      en: "Back view of the blue wrap dress",
-      th: "ภาพด้านหลังของเดรสห่อคลุมสีน้ำเงิน"
-    }
-  }
-]
-```
+The first photograph is the primary catalogue image. The browser reduces large
+photographs to a sensible size and WebP quality before upload. The server still
+checks the real file type and size. Removing a photograph is staged safely;
+an image used by a published product cannot be deleted until the replacement
+draft has been published.
 
-The first image is the main catalogue photograph. Additional images become
-gallery thumbnails.
+## English and Thai information
 
-## Choose a homepage collection image or video
+Drafts may be incomplete. Publication is blocked until required customer text,
+measurements, colours and photograph alternative text are present in both
+English and Thai. Product codes, prices and URLs do not need translation.
 
-Each homepage collection is represented by one product with a `home_showcase`
-field. `image_index` is zero-based: `0` selects the first product image, `1`
-selects the second, and so on.
+## Preview and publish
 
-```js
-home_showcase: {
-  image_index: 1,
-  name: {
-    en: "Short English collection feature name",
-    th: "Short Thai collection feature name"
-  }
-}
-```
+1. Select **Preview** to view the draft in the real customer product-page
+   design. Switch between English and Thai inside the preview.
+2. Correct anything that does not look right.
+3. Select **Save draft**.
+4. Select **Publish** and accept the confirmation.
 
-Use `home_showcase` on only one product in each category. To replace its still
-image with a future homepage video, upload a web-sized MP4 file and add an
-optional `hero_video` path. The selected product image remains the poster and
-reduced-motion fallback.
+Draft changes to an existing product remain private until Publish is selected.
+Publishing creates a new recorded revision and refreshes the public catalogue.
 
-```js
-home_showcase: {
-  image_index: 1,
-  hero_video: "products/mly-sk-001-hero.mp4",
-  name: {
-    en: "Pleated Patchwork Skirt",
-    th: "กระโปรงยาวผ้าต่อทรงพลีท"
-  }
-}
-```
+If a product is selected as its category's homepage showcase, publication
+reassigns that category atomically from the previous showcase. A category's
+current showcase cannot be removed or archived until a replacement is assigned.
 
-## Add a product video
+## Archive and restore
 
-Upload a short MP4 file to `images/products`, then add:
+Open a product and select **Archive** when it should disappear from customer
+pages without losing its history. Archived products remain in Administration
+and can be restored later. Permanent deletion is intentionally absent from the
+normal interface.
 
-```js
-video: {
-  src: "products/mly-dr-004-video.mp4",
-  poster: "products/mly-dr-004-front.webp"
-}
-```
+## Review history or restore an earlier version
 
-If there is no video, use:
+- Open **History** to see who changed what and when.
+- Open a product to see its previous revisions.
+- Select **Restore to draft** beside an earlier revision.
+- Preview the restored draft and Publish only when it is correct.
 
-```js
-video: null
-```
+Restoring a revision creates another draft; it does not silently overwrite the
+live customer product.
 
-## Add a new product
+## Export a backup
 
-Copy one complete product object in `js/products.js`, paste it before the final
-closing `];`, add a comma between products, and update every field.
+Select **Export backup** on the Products dashboard. Keep the downloaded JSON
+file in an owner-controlled location. It contains catalogue and change-history
+data but no passwords, Access tokens or Cloudflare credentials.
 
-```js
-{
-  code: "MLY-DR-004",
-  name: {
-    en: "English product name",
-    th: "ชื่อสินค้าภาษาไทย"
-  },
-  category: "dresses",
-  is_new: true,
-  price: 1290,
-  fabric: {
-    en: "English fabric description",
-    th: "รายละเอียดเนื้อผ้าภาษาไทย"
-  },
-  colours: [
-    { en: "Blue", th: "สีน้ำเงิน" }
-  ],
-  measurements: [
-    {
-      label: { en: "Bust", th: "รอบอก" },
-      value: { en: "34-38 in", th: "34-38 นิ้ว" }
-    },
-    {
-      label: { en: "Waist", th: "รอบเอว" },
-      value: { en: "28-32 in", th: "28-32 นิ้ว" }
-    },
-    {
-      label: { en: "Length", th: "ความยาว" },
-      value: { en: "42 in", th: "42 นิ้ว" }
-    }
-  ],
-  care: {
-    en: "English care instructions",
-    th: "คำแนะนำการดูแลภาษาไทย"
-  },
-  stock: "in_stock",
-  images: [],
-  video: null,
-  description: {
-    en: "English product description.",
-    th: "รายละเอียดสินค้าภาษาไทย"
-  },
-  marketplace_links: {
-    line: "",
-    tiktok: "",
-    shopee: "",
-    lazada: ""
-  }
-}
-```
+## Emergency JSON import
 
-If care instructions are unavailable, use `care: null`. The care row will be
-omitted from that product page.
+The Help tab contains **Emergency JSON import**.
 
-Allowed category values:
+1. Choose a Milly's JSON backup.
+2. Select **Validate and preview**.
+3. Review the number of new and updated drafts.
+4. Type the exact confirmation displayed.
+5. Select **Apply to private drafts**.
 
-- `dresses`
-- `kaftans`
-- `tops`
-- `sets`
-- `bags`
-- `pants`
-- `skirts`
+Import never updates published customer products directly. It creates or
+updates private drafts, checks that the catalogue has not changed since the
+preview, and requires individual review and publication afterward.
 
-Set `is_new: true` to show a small "New" badge on the product card. Change it
-to `false` when the item is no longer new. There is no separate New Arrivals
-category.
+## When changes become visible
 
-## Optional exact variant availability
+- **Quick stock:** immediate for the published product; allow up to about one
+  minute for cached customer requests.
+- **Save draft:** private; customers see no change.
+- **Publish:** live immediately after the operation; cached requests refresh
+  within about one minute.
+- **Archive/restore:** live immediately, with the same short cache window.
+- **Photograph upload:** private until attached to a saved and published draft.
 
-Do not add a size/colour availability matrix unless the combinations have
-been confirmed. When exact combination data becomes available, add this
-optional field to the product:
+## Grant an administrator
 
-```js
-variants: [
-  {
-    size: { en: "S", th: "S" },
-    colour: { en: "Blue", th: "สีน้ำเงิน" },
-    available: true
-  },
-  {
-    size: { en: "M", th: "M" },
-    colour: { en: "Blue", th: "สีน้ำเงิน" },
-    available: false
-  }
-]
-```
+Administrator access is deliberately not granted from the Milly's website.
+This prevents a stolen administrator session from quietly authorizing another
+person.
 
-The website displays the matrix only when `variants` exists and contains real
-data. Leave the field out when availability is unknown.
+A technical owner must add the exact lowercase email address in both places:
 
-## Product-specific order links
+1. The Cloudflare Access Allow policy protecting `/admin*`.
+2. The Worker's protected `ADMIN_EMAILS` secret/variable.
 
-Paste a product's exact marketplace address into `marketplace_links`:
+`ADMIN_EMAILS` is one comma-separated list, for example
+`owner@example.com,assistant@example.com`. Updating a Cloudflare secret
+replaces its previous value, so keep the complete approved list in a password
+manager and submit the whole list each time.
 
-```js
-marketplace_links: {
-  line: "https://...",
-  tiktok: "https://...",
-  shopee: "https://...",
-  lazada: "https://..."
-}
-```
+Milly's accepts at most 10 approved administrator addresses. This keeps the
+catalogue comfortably below the 50-user Cloudflare Zero Trust Free allowance.
 
-If a field is left empty, the website uses the general Milly's shop link from
-`js/site-config.js`.
+Test the new administrator in a private browser window before signing out the
+existing owner. Never share passwords, one-time codes, session cookies or
+Cloudflare API tokens.
 
-## Remove a product
+## Keep Cloudflare usage free
 
-If the item may return, prefer `stock: "sold_out"`. To remove it completely,
-delete the entire product object from its opening `{` to its closing `},`.
+- Upload photographs through Milly's Administration, not directly into R2.
+- The uploader limits each file to 2 MiB; the application stops accepting new
+  media at 5 GiB or 10,000 managed objects.
+- Keep the R2 bucket on Standard storage and private access.
+- Keep the approved administrator list at 10 or fewer.
+- Review **Manage Account → Billing → Billable Usage** regularly and create the
+  lowest available budget alert. Cloudflare alerts warn about spend but do not
+  pause usage automatically.
 
-## Before merging a content update
+## Revoke an administrator
 
-- Check the product code is unique.
-- Check the price and measurements against the source information.
-- Check English and Thai fields.
-- Open every uploaded image.
-- Test all product-specific order links.
-- Confirm the branch, not `main`, contains the change.
-- Ask a Thai-speaking reviewer to approve customer-facing Thai copy.
+A technical owner must remove the person's email in both places:
+
+1. The Cloudflare Access Allow policy for `/admin*`.
+2. The Worker's `ADMIN_EMAILS` secret/variable.
+
+Update both controls. Removing only one is not the intended operating procedure,
+even though the Worker independently blocks an email missing from its allowlist.
+
+## If Administration is unavailable
+
+1. Do not make customer-facing code changes as a first response.
+2. Check whether the normal customer site still works. It has a cached and
+   embedded emergency catalogue fallback.
+3. Try a private browser window and sign in again.
+4. Ask the technical maintainer to check Cloudflare Access, Worker health and
+   D1/R2 bindings.
+5. Keep the latest JSON export ready. Do not run an import or database restore
+   until the cause is known.
+
+## Technical emergency section
+
+The authoritative catalogue is Cloudflare D1 after production migration.
+Future uploads are stored in R2. `js/products.js` remains a read-only emergency
+snapshot of the initial 110-product catalogue and must not be used for routine
+edits.
+
+Maintainer setup, migration, Access, export, D1 Time Travel and rollback steps
+are in `CLOUDFLARE_ADMIN_SETUP.md`. Never commit `.dev.vars`, Access settings,
+approved administrator emails, API tokens or backup exports.

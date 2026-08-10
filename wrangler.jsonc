@@ -1,0 +1,36 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "millys",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-08",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": [
+      "/api/*",
+      "/admin*",
+      "/media/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "millys-catalogue",
+      "database_id": "d12d0af7-7a60-4b5b-b14a-e9999cf0e880",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "millys-product-media"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ACCESS_TEAM_DOMAIN": "millys.cloudflareaccess.com",
+    "ACCESS_AUD": "828dbc8731d0c7646ed63d0d26ccafbe8da9bea6fc2e47d813aa25554acac2bc",
+    "PUBLIC_CATALOGUE_CACHE_SECONDS": "60"
+  }
+}

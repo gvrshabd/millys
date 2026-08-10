@@ -1,0 +1,15 @@
+body.admin-customer-preview { min-width: 0; }
+.admin-customer-preview .section { padding-top: 28px; padding-bottom: 48px; }
+.admin-customer-preview .preview-empty {
+  padding: 30px;
+  color: var(--taupe);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.admin-customer-preview .breadcrumb span { color: var(--taupe); }
+.admin-customer-preview .inquiry-product-btn { pointer-events: none; }
+
+@media (max-width: 520px) {
+  .admin-customer-preview .section { padding-top: 14px; }
+  .admin-customer-preview .container { padding-right: 12px; padding-left: 12px; }
+}
